@@ -1,0 +1,33 @@
+% parameters
+\newcommand{\parametertype}[5]{
+\begin{center}
+\begin{tabular}[c]{|c|c|c|c|c|}
+\hline Type & Default value & Min & Max & Min Resolution \\
+\hline #1 & #2 & #3 & #4 & #5\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+\newcommand{\parametercolor}[1]{{\color{blue}{#1}}}
+
+\newcommand{\parameter}[1]{\parametercolor{\gls{#1}}}
+
+\newcommand{\newparameter}[3]{
+\newglossaryentry{#1}{
+  type=parameters,
+  name={#2},
+  description={#3}
+}
+}
+% usecases
+\newcommand{\usecase}[3]{
+\textbf{Usecase:} #1 \\
+{\small ID: #2} \\
+#3 \\}
+
+% system requirements
+\newcommand{\sysreq}[3]{
+\textbf{Sys-Req:} #1 \\
+{\small ID: #2} \\
+\textbf{Rationale: }#3\\}

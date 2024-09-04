@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Software build process</title>
+</head>
+
+<body>
+    <h1>Software build process</h1>
+    <h2>Software packaging target chain</h2>
+    <img src="graph-packaging.png" alt="Software packaging target chain">
+    <h2>Software documentation target chain</h2>
+    <img src="graph-documentation.png" alt="Software documentation target chain">
+    <h2>Software build graph for configuration @CMAKE_BUILD_TYPE@</h2>
+    <img src="graph-cmake-@CMAKE_BUILD_TYPE@.png" alt="Software build graph for configuration @CMAKE_BUILD_TYPE@">
+</body>
+
+</html>

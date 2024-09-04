@@ -1,0 +1,5 @@
+#define VERSION @SHORT_HASH @
+
+const char* getVersion() {
+  return "@CMAKE_PROJECT_VERSION@ - @SHORT_HASH@";
+}

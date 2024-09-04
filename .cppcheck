@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <builddir>build-x86-Debug</builddir>
+    <platform>unix64</platform>
+    <std>c++14</std>
+    <check-config>true</check-config>
+    <report-progress>true</report-progress>
+    <check-headers>true</check-headers>
+</project>
+<!-- cppcheck-build-dir -->

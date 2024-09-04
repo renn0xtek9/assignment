@@ -1,0 +1,27 @@
+name: Continuous Integration
+run-name: ${{ github.actor }} submitting PR for ${{ github.head_ref }}
+on: [push]
+jobs:
+  build-devcontainer:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Create empty ssh dir
+        run: mkdir -p ~/.ssh
+      - name: Create dummy bash_aliases
+        run: touch ~/.bash_aliases
+      - name: Build the devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: ci-image
+          push: never
+          runCmd: echo Success
+      - name: Build
+        uses: kohlerdominik/docker-run-action@v1
+        with:
+          options: |
+            -v ${{ github.workspace }}:/workspace
+            --name ci-container
+          image: ci-image:latest
+          run: make configure && make build_release

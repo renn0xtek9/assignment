@@ -1,0 +1,28 @@
+@startuml
+
+actor User
+entity Shell
+entity DesktopClient
+entity LinuxKernel
+entity DeviceFile
+
+entity MCU
+User -> Shell: Start shell
+Shell -> DesktopClient: Start desktop client
+DesktopClient -> LinuxKernel: Check existence of device file
+LinuxKernel -> DesktopClient: Deny access
+User -> MCU: Plug MCU to USB port
+MCU -> MCU: Boot
+MCU -> LinuxKernel: Identification
+note right
+Is it simply over vendorID
+and productID?
+end note
+LinuxKernel -> DeviceFile: Create a device file
+DesktopClient -> LinuxKernel: Check existence of device file
+LinuxKernel -> DesktopClient: Confirm existence of device file
+DesktopClient -> LinuxKernel: Request read/write access to device file
+LinuxKernel -> DesktopClient: Allow read/write access to device file
+DesktopClient -> Shell: Log succesfull access to device file
+
+@enduml

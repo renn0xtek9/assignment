@@ -1,0 +1,40 @@
+# Doxyfile
+
+# Set the project name
+PROJECT_NAME = STM32 Hello World
+
+PROJECT_LOGO = @CMAKE_SOURCE_DIR@/documentation/resources/project_logo.png
+
+# Set the project version
+PROJECT_VERSION = @PROJECT_VERSION@
+
+# Set the output directory for the generated documentation
+OUTPUT_DIRECTORY = @CMAKE_CURRENT_BINARY_DIR@/code_documentation/
+CREATE_SUBDIRS = YES
+
+# Set the input directories for the source code
+INPUT = @CMAKE_SOURCE_DIR@/desktop_client
+RECURSIVE = YES
+
+# Set the file patterns to include in the documentation
+FILE_PATTERNS = *.cpp *.h
+
+# Enable HTML output
+GENERATE_HTML = YES
+
+# Set the HTML output directory
+HTML_OUTPUT = html
+
+# Enable the generation of a compound index
+GENERATE_HTML_HELP = YES
+
+# Enable the generation of a search index
+GENERATE_SEARCHHELP = YES
+
+GENERATE_TESTLIST = YES
+GENERATE_BUGLIST = YES
+GENERATE_DEPRECATEDLIST = YES
+
+
+
+GENERATE_LATEX = YES
