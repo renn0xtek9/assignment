@@ -1,38 +1,65 @@
 @startuml
+box Flight Software
+    entity OdometryApp
+    entity IMUMessageQueue
+    entity IMUDriver
+end box
 
-entity OdometryApp
-entity IMUMessageQueue
-entity IMUDriver
-entity DeviceFile
-entity Kernel
-entity UART
+box Operating System
+    entity DeviceFile
+    entity Kernel
+    entity UART
+end box
 entity IMU
 
-rnote over IMUMessageQueue
-    free
-endrnote
+group Queuing a measurement
+    rnote over IMU
+        t_mes1
+    endrnote
+    IMU -> UART: Send first bit of message
+    UART -> Kernel: Receive first bit
+    loop 7 times
+        IMU -> UART: Send bits
+        UART -> Kernel: Receive bits
+    end
 
-IMU -> UART: Send first bit of message
-UART -> Kernel: Receive first bit
-IMU -> UART: Send bits
-UART -> Kernel: Receive bits
-IMU -> UART: ...
-UART -> Kernel: ...
+    Kernel -> Kernel: Bits to byte assembly
 
-rnote over Kernel
-    Reassembles bits in bytes
-endrnote
-Kernel -> DeviceFile: Write first byte
-Kernel -> DeviceFile: Write bytes
+    Kernel -> DeviceFile: Write first byte
 
-rnote over IMU
-    Send all bits of the message
-endrnote
+    rnote over IMU
+        Send all bits of the message
+    endrnote
 
-Kernel -> IMUDriver: Receiving first byte of msg
-IMUDriver -> Kernel: Poll timestamp
-Kernel -> IMUDriver: Receiving bytes
+    Kernel -> IMUDriver: Receiving first byte of msg
+    IMUDriver -> Kernel: Poll clock time
+    loop n times
+        Kernel -> DeviceFile: Write other bytes
+        DeviceFile -> IMUDriver: Receiving other bytes
+    end
+    IMUDriver ->IMUDriver: Reconstruct IMU message from bytes
+    IMUDriver -> IMUMessageQueue: Lock the  memory resource
+    activate IMUMessageQueue #Red
+    IMUDriver -> IMUMessageQueue: Enqueue message to queue
+    IMUDriver -> IMUMessageQueue: Release the memory resource
+    deactivate IMUMessageQueue
+end
 
+loop Process "Queuing a measurement" repeated x times
+    rnote over IMU
+        t_mes2
+    endrnote
+    IMU --> IMUDriver: Send data
 
+    activate IMUMessageQueue #Red
+    IMUDriver -> IMUMessageQueue: Enqueue message to queue
+    deactivate IMUMessageQueue
+end
+
+OdometryApp -> IMUMessageQueue: Lock the memory resource
+activate IMUMessageQueue #Red
+OdometryApp -> IMUMessageQueue: Purge the queue
+OdometryApp -> IMUMessageQueue: Release the memory resource
+deactivate IMUMessageQueue
 
 @enduml
