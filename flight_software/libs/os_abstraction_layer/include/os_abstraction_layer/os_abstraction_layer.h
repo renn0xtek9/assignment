@@ -1,6 +1,6 @@
 // Copyright 2024 <Maxime Haselbauer>
-#ifndef DEVICE_HANDLER_OS_ABSTRACTION_LAYER_H
-#define DEVICE_HANDLER_OS_ABSTRACTION_LAYER_H
+#ifndef OS_ABSTRACTION_LAYER_OS_ABSTRACTION_LAYER_H
+#define OS_ABSTRACTION_LAYER_OS_ABSTRACTION_LAYER_H
 #include <fcntl.h>
 #include <os_abstraction_layer/os_abstraction_layer_interface.h>
 #include <unistd.h>
