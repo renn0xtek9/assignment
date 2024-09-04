@@ -1,0 +1,38 @@
+@startuml
+
+entity OdometryApp
+entity IMUMessageQueue
+entity IMUDriver
+entity DeviceFile
+entity Kernel
+entity UART
+entity IMU
+
+rnote over IMUMessageQueue
+    free
+endrnote
+
+IMU -> UART: Send first bit of message
+UART -> Kernel: Receive first bit
+IMU -> UART: Send bits
+UART -> Kernel: Receive bits
+IMU -> UART: ...
+UART -> Kernel: ...
+
+rnote over Kernel
+    Reassembles bits in bytes
+endrnote
+Kernel -> DeviceFile: Write first byte
+Kernel -> DeviceFile: Write bytes
+
+rnote over IMU
+    Send all bits of the message
+endrnote
+
+Kernel -> IMUDriver: Receiving first byte of msg
+IMUDriver -> Kernel: Poll timestamp
+Kernel -> IMUDriver: Receiving bytes
+
+
+
+@enduml
