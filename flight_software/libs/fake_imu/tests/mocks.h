@@ -16,6 +16,10 @@ class MockOsAbstractionLayer : public OsAbstractionLayerInterface {
   MOCK_METHOD(bool, CheckDeviceFileExists, (const std::string& device_file_path), (const, override));
   MOCK_METHOD(int, OpenDeviceFile, (const std::string& device_file_path), (const, override));
   MOCK_METHOD(int, CloseDeviceFile, (int file_descriptor), (const, override));
+  MOCK_METHOD(std::size_t,
+              Write,
+              (const int& file_descriptor, const void* data, const std::size_t& size),
+              (const, override));
 };
 
 }  // namespace OsAbstractionLayer

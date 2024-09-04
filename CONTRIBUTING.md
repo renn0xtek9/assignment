@@ -17,7 +17,7 @@
 ├── conanfile.txt
 ├── conan_profiles
 │   └── ... # Conan build profiles.
-├── desktop_client # Client (x86) application
+├── flight_software # Client (x86) application
 │   ├── application
 │   │   ├── .. # Main files
 │   ├── CMakeLists.txt

@@ -27,6 +27,10 @@ int OsAbstractionLayer::OpenDeviceFile(const std::string& device_file_path) cons
   }
   return file_descriptor;
 }
+
+std::size_t OsAbstractionLayer::Write(const int& file_descriptor, const void* data, const std::size_t& size) const {
+  return write(file_descriptor, data, static_cast<size_t>(size));
+}
 // LCOV_EXCL_STOP
 
 }  // namespace OsAbstractionLayer

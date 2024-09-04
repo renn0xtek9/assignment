@@ -33,6 +33,15 @@ class OsAbstractionLayer : public OsAbstractionLayerInterface {
    *\return 0 if the file was closed successfully, -1 otherwise
    */
   int CloseDeviceFile(int file_descriptor) const final;
+
+  /*! \fn int Write
+   *\brief Write bytes to a file descriptor
+   *\param file_descriptor file descriptor integer
+   *\param data data to be written
+   *\param size size of the data
+   *\return number of bytes written
+   */
+  std::size_t Write(const int& file_descriptor, const void* data, const std::size_t& size) const final;
 };
 
 }  // namespace OsAbstractionLayer
