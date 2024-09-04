@@ -1,0 +1,29 @@
+@startuml
+
+entity DummyOdometryApp
+entity IMUDriver
+entity Kernel
+entity VirtualDevFileDriver
+
+entity VirtualDevFileSil
+entity SilApp
+
+actor Tester
+
+
+Tester -> Kernel: Invoke script to allocate virtual device files
+
+Kernel -> VirtualDevFileDriver: Allocate virtual device file
+Kernel -> VirtualDevFileSil: Allocate virtual device file
+
+Tester -> SilApp: Start SIL app
+Tester -> DummyOdometryApp: Start dummy odometry app
+
+SilApp -> VirtualDevFileSil: Write Fake IMU measurements
+
+IMUDriver -> VirtualDevFileDriver: Read IMU measurements
+
+DummyOdometryApp -> IMUDriver: Consume IMU message queue
+
+
+@enduml

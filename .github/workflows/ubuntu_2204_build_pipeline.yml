@@ -40,5 +40,5 @@ jobs:
     - name: Install package
       run: sudo apt-get install -y /tmp/stm32-helloworld-0.0.1-Release-Linux.deb
 
-    - name: Smoke test desktop_client
-      run: if ! $(ldd /usr/bin/desktop_client | grep -q "not found") ; then echo OK ;else "Some libraries not found for /usr/bin/desktop_client"; ldd /usr/bin/desktop_client ; fi
+    - name: Smoke test flight_software
+      run: if ! $(ldd /usr/bin/flight_software | grep -q "not found") ; then echo OK ;else "Some libraries not found for /usr/bin/flight_software"; ldd /usr/bin/flight_software ; fi

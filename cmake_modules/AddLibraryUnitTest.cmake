@@ -14,7 +14,8 @@ FUNCTION (add_library_unit_test)
     PARSED_ARGS # prefix of output variables
     "" # list of names of the boolean arguments (only defined ones will be true)
     "" # list of names of mono-valued arguments
-    "SRCS" # list of names of multi-valued arguments (output variables are
+    "SRCS;LINK_LIBRARIES" # list of names of multi-valued arguments (output
+                          # variables are
     # lists)
     ${ARGN} # arguments of the function to parse, here we take the all original
             # ones
@@ -48,6 +49,7 @@ FUNCTION (add_library_unit_test)
   TARGET_LINK_LIBRARIES (
     ${LIBNAME}_test
     ${LIBNAME}
+    ${PARSED_ARGS_LINK_LIBRARIES}
     ${GTEST_MAIN_LIBRARIES}
     ${GTEST_LIBRARIES}
     pthread
