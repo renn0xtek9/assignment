@@ -24,8 +24,6 @@
 \usepackage{algorithmic}
 \usepackage{rotating}
 
-\include{font.tex}
-
 \include{newcommand.tex}
 
 \include{acronym_glossary.tex}
@@ -36,7 +34,7 @@
 
 
 \title{Requirements}
-\author{John Doe}
+\author{Maxime Haselbauer}
 \addbibresource{./library.bib}
 \setlength{\parindent}{0pt}
 \makeindex
@@ -46,11 +44,12 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Set of requirements for a basic STM32 project.
+Requirements analysis document for the development of an IMU driver.
 \end{abstract}
 \printnomenclature
 \printglossaries
 
+\include{introduction.tex}
 \include{high_level_system_overview.tex}
 \include{use_cases.tex}
 
