@@ -50,28 +50,3 @@ void FakeImu::SendImuData(const ImuData& data) {
     SendByte(byte);
   }
 }
-
-// #include <fcntl.h>
-// #include <unistd.h>
-
-// #include <array>
-// #include <cstddef>
-// #include <cstring>
-// #include <iostream>
-// #include <thread>
-
-// void simulate_functionning_imu(const int& file_descriptor) {
-//   while (true) {
-//     send_data(file_descriptor, ImuData{});
-//     std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_BETWEEN_MEASUREMENTS_MS));
-//   }
-// }
-
-// int main() {
-//   std::cout << "Distance between two measurements: " << SLEEP_TIME_BETWEEN_MEASUREMENTS_MS << std::endl;
-//   const std::string device_file = "/tmp/vserial1";
-//   const auto file_descriptor = open_serial_file(device_file);
-//   simulate_functionning_imu(file_descriptor);
-//   close(file_descriptor);
-//   return 0;
-// }
