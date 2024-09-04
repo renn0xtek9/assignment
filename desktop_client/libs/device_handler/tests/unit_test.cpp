@@ -3,10 +3,10 @@
  * \brief unit tests of device handler library
  */
 #include <device_handler/device_handler.h>
-#include <device_handler/os_abstraction_layer.h>
 #include <fcntl.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <os_abstraction_layer/os_abstraction_layer.h>
 
 #include "fixtures.h"
 

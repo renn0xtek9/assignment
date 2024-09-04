@@ -4,6 +4,7 @@ INCLUDE (GenerateGitHashAtBuildTime)
 ADD_EXECUTABLE (${DESKTOP_CLIENT_APP_NAME} main.cpp)
 TARGET_INCLUDE_DIRECTORIES (${DESKTOP_CLIENT_APP_NAME}
                             PRIVATE ${CMAKE_BINARY_DIR})
-TARGET_LINK_LIBRARIES (${DESKTOP_CLIENT_APP_NAME} PUBLIC device_handler)
+TARGET_LINK_LIBRARIES (${DESKTOP_CLIENT_APP_NAME} PUBLIC device_handler
+                                                         os_abstraction_layer)
 
 INSTALL (TARGETS ${DESKTOP_CLIENT_APP_NAME} RUNTIME DESTINATION bin)

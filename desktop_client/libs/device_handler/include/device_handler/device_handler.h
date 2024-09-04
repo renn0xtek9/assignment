@@ -4,9 +4,9 @@
 /*! \file device_handler.h
 \brief Handle STM32 device
 */
-#include <device_handler/os_abstraction_layer.h>
 #include <fcntl.h>
 #include <messages/communication_message.h>
+#include <os_abstraction_layer/os_abstraction_layer.h>
 #include <unistd.h>
 
 #include <cstring>

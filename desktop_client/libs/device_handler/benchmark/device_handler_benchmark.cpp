@@ -3,7 +3,7 @@
  * \brief Benchmark runtime of probe library
  */
 #include <device_handler/device_handler.h>
-#include <device_handler/os_abstraction_layer.h>
+#include <os_abstraction_layer/os_abstraction_layer.h>
 
 #include <chrono>
 #include <iostream>

@@ -2,9 +2,9 @@
 #ifndef MOCKS_H
 #define MOCKS_H
 
-#include <device_handler/os_abstraction_layer_interface.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <os_abstraction_layer/os_abstraction_layer_interface.h>
 
 #include <functional>
 #include <string>
