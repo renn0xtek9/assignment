@@ -1,4 +1,4 @@
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
 ADD_EXECUTABLE (${LIBNAME}_benchmark ${LIBNAME}_benchmark.cpp)
 TARGET_LINK_LIBRARIES (${LIBNAME}_benchmark device_handler)
 
