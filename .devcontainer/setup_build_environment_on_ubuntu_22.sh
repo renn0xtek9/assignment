@@ -5,7 +5,7 @@ DEBIAN_FRONTEND=noninteractive
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 sudo apt-get update
-sudo apt-get install -y curl nano cmake gcc gcovr python3 python3-pip git valgrind clang-format clang-tidy cpplint cppcheck iwyu shellcheck
+sudo apt-get install -y curl nano cmake gcc gcovr python3 python3-pip git valgrind clang-format clang-tidy cpplint cppcheck iwyu shellcheck socat
 
 python3 -m pip install -r requirements.txt
 
