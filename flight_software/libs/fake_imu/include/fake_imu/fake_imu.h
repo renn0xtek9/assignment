@@ -7,8 +7,8 @@
 #include <chrono>
 #include <cstddef>
 #include <iomanip>
+#include <queue>
 #include <string>
-
 /*! \brief IMU data structure
  */
 struct ImuData {
@@ -21,6 +21,13 @@ struct ImuData {
   float temperature{25.0F};
   std::chrono::nanoseconds timestamp{};
 };
+
+struct ImuDataQueue {
+  std::uint32_t dropped_message{0};
+  std::queue<ImuData> data_queue{};
+};
+
+enum class ImuDriverStatus { OK, BUSY, NO_DATA };
 
 /*! \brief overload steam operator for ImuData*/
 inline std::ostream& operator<<(std::ostream& out, const ImuData& data) {
