@@ -16,27 +16,32 @@ group Queuing a measurement
     rnote over IMU
         t_mes1
     endrnote
+    IMU -> UART: Send start bit
+    loop 8 times
+        IMU -> UART: Send bits of start byte.
+    end
+    Kernel -> Kernel: Bits to byte assembly
+    Kernel -> DeviceFile: Write start byte
+    DeviceFile -> IMUDriver: Receive start byte
+    IMUDriver -> Kernel: Poll clock time
+    rnote over IMUDriver
+        Timestamp retrieved
+    endrnote
     IMU -> UART: Send first bit of message
     UART -> Kernel: Receive first bit
-    loop 7 times
-        IMU -> UART: Send bits
-        UART -> Kernel: Receive bits
+    loop 14 times
+        loop 8 times
+            IMU -> UART: Send bits
+            UART -> Kernel: Receive bits
+            Kernel -> Kernel: Bits to byte assembly
+            rnote over IMU
+                Send all bits of the message
+            endrnote
+        end
+        Kernel -> DeviceFile: Write byte
+        DeviceFile -> IMUDriver: Receive byte
     end
 
-    Kernel -> Kernel: Bits to byte assembly
-
-    Kernel -> DeviceFile: Write first byte
-
-    rnote over IMU
-        Send all bits of the message
-    endrnote
-
-    Kernel -> IMUDriver: Receiving first byte of msg
-    IMUDriver -> Kernel: Poll clock time
-    loop n times
-        Kernel -> DeviceFile: Write other bytes
-        DeviceFile -> IMUDriver: Receiving other bytes
-    end
     IMUDriver ->IMUDriver: Reconstruct IMU message from bytes
     IMUDriver -> IMUMessageQueue: Lock the  memory resource
     activate IMUMessageQueue #Red
@@ -52,7 +57,7 @@ loop Process "Queuing a measurement" repeated x times
     IMU --> IMUDriver: Send data
 
     activate IMUMessageQueue #Red
-    IMUDriver -> IMUMessageQueue: Enqueue message to queue
+    IMUDriver --> IMUMessageQueue: Enqueue message to queue
     deactivate IMUMessageQueue
 end
 

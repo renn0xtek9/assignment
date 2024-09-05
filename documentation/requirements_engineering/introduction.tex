@@ -3,9 +3,10 @@ We will develop an driver for an IMU that communicate with our system over a ser
 For the pre-development, we make the following assumptions:
 \begin{itemize}
     \item the IMU is a 6DOF sensor that provides acceleration and angular rates.
-    \item the IMU has no sense of the current date and time.
+    \item the IMU does not store the current date and time internally.
     \item for the purpose of this work, we will develop the software on a Linux x86 platform. We assume that actual deployment will be on a POSIX compliant system.
     \item since the Linux Kernel already have a driver for UART perifpheral, the driver shall not implement low level functionality, like reassambling the bits in bytes.
     \item the IMU data collected by the driver are processed by an odometry application (that reconstruct the vehicle trajectory).
     We assume it is the only client of the IMU data.
+    \item for simplicity we assume that the IMU is already configured to send data continuously at a fixed rate.
 \end{itemize}

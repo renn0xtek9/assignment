@@ -24,7 +24,8 @@
         "hbenl.vscode-test-explorer",
         "malcolmmielle.semantic-highlighting",
         "derivitec-ltd.cmake-test-adapter",
-        "jebbs.plantuml"
+        "jebbs.plantuml",
+        "hediet.vscode-drawio"
       ]
     }
   },
