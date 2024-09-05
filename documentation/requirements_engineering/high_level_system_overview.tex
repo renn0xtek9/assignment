@@ -3,7 +3,10 @@ This section addresses high level system design especially.
 \begin{itemize}
     \item data structure and data flow
     \item sequential interaction between the system subcomponents
+    \item superficial fault tree analysis
+    \item software interface definitions
 \end{itemize}
+The information gathered will be used to derive system requirements \ref{sec:system_requirements}.
 
 \subsection{Data structure and data flow}
 We propose the following characteristics for the IMU. Those are inspired for \cite{lm6ds3}. This is a MEMS IMU that is neither a space grade nor UART capable, but provide good characeristic of a basic IMU.
@@ -18,7 +21,7 @@ We assume that the IMU will provide the following data:
     \item $\omega_z$ angular rate along its z-axis
     \item $T$ temperature of the sensor.
 \end{itemize}
-From this we derive requirements \hyperref[req-1]{1}.
+From this we derive requirements \linkreq{1}.
 We assume that the physical sampling of all those values are made at the exact same time, respectively the difference between the sampling time is negligible.
 In other word we can timestamp the measurment time with a single timestamp $t_{mes}$.
 % file:///home/mhaselbauer/Downloads/lsm6ds3tr-c.pdf
@@ -45,7 +48,7 @@ From this we derive \linkreq{2}, \linkreq{3} and \linkreq{4}.
 
 
 \subsection{Sequential interaction}
-The system has following subsystem:
+The system has following components:
 \begin{itemize}
     \item the IMU itself.
     \item the UART peripheral of the compute platform.
@@ -53,7 +56,7 @@ The system has following subsystem:
     \item the device file that will be created by the kernel to describe the device.
     \item the IMU driver software component.
     \item the IMU message queue.
-    \item the Odometry application that will consume the IMU data.
+    \item the odometry application that will consume the IMU data.
 \end{itemize}
 
 \begin{figure}[H]
@@ -63,7 +66,7 @@ The system has following subsystem:
     \label{fig-high-level-nominal}
 \end{figure}
 
-In nominal operation the sequence of intercation (Fig.\ref{fig-high-level-nominal}) is as follow:\\
+Fig.\ref{fig-high-level-nominal} describe the interaction sequence in the normal operation mode:\\
 The IMU makes a new measurment at $t_{mes1}$.
 It then sends a start byte to the UART to notify receiver of upcomming data frame.
 When the first 8 bits of the start byte have been received, the low level UART driver of the kernel will write the byte to the device file.
@@ -110,7 +113,7 @@ The IMU has stop sending messages & the mitigation consist in setting the status
 \end{center}
 
 
-\subsection{Interface definition}
+\subsection{Software interface definition}
 We define the following structure for IMU messages.\\
 To fullfill \linkreq{1}, \linkreq{8} and \linkreq{NF1},
 \begin{lstlisting}[style=cppstyle]
