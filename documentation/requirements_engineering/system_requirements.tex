@@ -8,6 +8,7 @@
 \sysreq{6}{The IMU driver shall be executed in a thread separated from the main application thread.}
 \sysreq{7}{The IMU driver shall write new IMU messages into a shared memory queue.}
 \sysreq{8}{The IMU driver shall save the timestamp of every IMU message together with the message itself.}
+\sysreq{9}{The IMU driver shall the start of a new data frame from the IMU.}
 \subsection{Technical safety requirements}
 \sysreq{TS1}{The IMU driver shall detect the start of an IMU message transmission from the IMU with an appropriate start byte.}
 \sysreq{TS2}{The IMU driver shall represent the IMU driver status as a structure containing a status code.}

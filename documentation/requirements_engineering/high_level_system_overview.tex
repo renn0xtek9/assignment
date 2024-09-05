@@ -64,9 +64,10 @@ The system has following subsystem:
 \end{figure}
 
 In nominal operation the sequence of intercation (Fig.\ref{fig-high-level-nominal}) is as follow:\\
-The IMU make a new measurment at $t_{mes1}$.
-It then sends the data for this measurments bit by bit to the UART peripheral.
-When the first 8 bits have been received, the low level UART driver of the kernel will write a byte to the device file.
+The IMU makes a new measurment at $t_{mes1}$.
+It then sends a start byte to the UART to notify receiver of upcomming data frame.
+When the first 8 bits of the start byte have been received, the low level UART driver of the kernel will write the byte to the device file.
+The IMU driver will read this and recognize the start of a new data frame (\linkreq{9}).
 The IMU driver will then poll the clock time and use it to timestamp the measurement (\linkreq{5}).
 The rest of the bytes are collected and then reconstructed into an IMU message.\\
 The execution of the IMU driver shall not block the OdometryApp. Thus they must run in separate threads (\linkreq{6}).
