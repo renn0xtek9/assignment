@@ -3,9 +3,28 @@ We will develop an driver for an IMU that communicate with our system over a ser
 For the pre-development, we make the following assumptions:
 \begin{itemize}
     \item the IMU is a 6DOF sensor that provides acceleration and angular rates.
-    \item the IMU has no sense of the current date and time.
+    \item the IMU does not store the current date and time internally.
     \item for the purpose of this work, we will develop the software on a Linux x86 platform. We assume that actual deployment will be on a POSIX compliant system.
     \item since the Linux Kernel already have a driver for UART perifpheral, the driver shall not implement low level functionality, like reassambling the bits in bytes.
     \item the IMU data collected by the driver are processed by an odometry application (that reconstruct the vehicle trajectory).
     We assume it is the only client of the IMU data.
+    \item for simplicity we assume that the IMU is already configured to send data continuously at a fixed rate.
 \end{itemize}
+
+% file:///home/mhaselbauer/Downloads/lsm6ds3tr-c.pdf
+We assume that the IMU has an acceleration range of $\pm 16g$ and angular rate range of $\pm 250^{\circ}/s$.
+Both are represented by 16 bits values.
+We assume the 16 bits are sent on the UART protocol in 2 bytes, with the least significant byte first.
+We can obtain the acceleration and angular rates from their raw value coded on the 16 bits via.
+\begin{equation}
+    a = \frac{raw}{2^{15}} \times 16
+\end{equation}
+\begin{equation}
+    \omega = \frac{raw}{2^{15}} \times 250
+\end{equation}
+We assume an output data rate of 208 Hz.
+
+The temperature sensor measurement is stored on 16 bits with 256 LSB $^{\circ}C$.
+\begin{equation}
+    T^{\circ_C} = 25+\frac{raw}{256}
+\end{equation}
