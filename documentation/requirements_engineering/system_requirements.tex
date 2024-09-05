@@ -3,3 +3,7 @@
 \sysreq{2}{The system shall convert an array of 16 bit with the least significant byte first to an accleration in $g$.}
 \sysreq{3}{The system shall convert an array of 16 bit with the least significant byte first to an angular rate in $\circ/s$.}
 \sysreq{4}{The system shall convert an array of 16 bit with the least significant byte first to an temperature in $\circ C$.}
+\sysreq{5}{The IMU driver shall retrieve the current time when the first byte of a new IMU mesurement is received by the UART peripheral.}
+\sysreq{6}{The IMU driver shall be executed in a thread separated from the main application thread.}
+\sysreq{7}{The IMU driver shall be write new IMU messages into a shared memory queue.}
+\sysreq{8}{The IMU driver shall save the timestamp of every IMU message together with the message itself.}
