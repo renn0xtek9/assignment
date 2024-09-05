@@ -68,7 +68,7 @@ The IMU make a new measurment at $t_{mes1}$.
 It then sends the data for this measurments bit by bit to the UART peripheral.
 When the first 8 bits have been received, the low level UART driver of the kernel will write a byte to the device file.
 The IMU driver will then poll the clock time and use it to timestamp the measurement (\linkreq{5}).
-The rest of the byte are collected and then reconstructed into an IMU message.\\
+The rest of the bytes are collected and then reconstructed into an IMU message.\\
 The execution of the IMU driver shall not block the OdometryApp. Thus they must run in separate threads (\linkreq{6}).
 To exchange data with the OdometryApp, the IMU driver shall stor data in a shared memory queue (\linkreq{7}).\\
 This process is repeated several times until the OdometryApp purge all message stored in the queue.\\
@@ -101,7 +101,7 @@ Message from IMU are incomplete. & shall be address by \linkreq{TS1}. \\
 \hline
 The IMU baudrate is higher than expected & in this simple example, the mitigation consist in notifying the OdometryApp when it collect the IMU messages (\linkreq{TS2},\linkreq{TS3},\linkreq{TS4}). \\
 \hline
-The IMU message queue has reached max size & the mitigation consist in notifying with a counter of dropped message (\linkreq{TS5},\linkreq{TS6}). \\
+The IMU message queue has reached max size & the queue shall not grow indefinitely to prevent memory allocation issue(\linkreq(TS8)). The mitigation for the possible drop of message consist in notifying with a counter of dropped message (\linkreq{TS5},\linkreq{TS6}). \\
 \hline
 The IMU has stop sending messages & the mitigation consist in setting the status to NO\_DATA (\linkreq{TS3},\linkreq{TS7}). \\
 \hline
@@ -110,3 +110,34 @@ The IMU has stop sending messages & the mitigation consist in setting the status
 
 
 \subsection{Interface definition}
+We define the following structure for IMU messages.\\
+To fullfill \linkreq{1}, \linkreq{8} and \linkreq{NF1},
+\begin{lstlisting}[style=cppstyle]
+struct ImuData {
+    float a_x{};
+    float a_y{};
+    float a_z{};
+    float omega_x{};
+    float omega_y{};
+    float omega_z{};
+    float temperature{};
+    std::chrono::nanoseconds timestamp{};
+};
+\end{lstlisting}
+\textbf{Note:} on x86 the float type is 32 bits long which is more than the strictly necessary 16 bits. We keep float type to be compliant with the C++17 standard library.
+There is no requirements on the resolution of the timestamp. This shall be derived from the actual use cases of the OdometryApp.
+For the sake of higher accuracy we choose nanoseconds.
+Since the measurement would come at 208 Hz only we could potentially microseconds or even miliseconds.\\
+
+To fulfill \linkreq{TS8} and \linkreq{TS5}.
+\begin{lstlisting}[style=cppstyle]
+struct ImuDataQueue {
+  std::uint32_t dropped_message{0};
+  SizedCapedQueue<ImuData> data_queue{};
+};
+\end{lstlisting}
+
+To fulfull \linkreq{TS2}, \linkreq{TS3}, \linkreq{TS7},
+\begin{lstlisting}[style=cppstyle]
+enum class ImuDriverStatus { OK, BUSY, NO_DATA };
+\end{lstlisting}

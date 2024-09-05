@@ -6,19 +6,35 @@
 
 #include <chrono>
 #include <cstddef>
+#include <iomanip>
 #include <string>
 
 /*! \brief IMU data structure
  */
 struct ImuData {
-  float x{0.1F};
-  float y{0.2F};
-  float z{0.3F};
+  float a_x{0.1F};
+  float a_y{0.2F};
+  float a_z{0.3F};
+  float omega_x{0.4F};
+  float omega_y{0.5F};
+  float omega_z{0.6F};
+  float temperature{25.0F};
+  std::chrono::nanoseconds timestamp{};
 };
 
 /*! \brief overload steam operator for ImuData*/
 inline std::ostream& operator<<(std::ostream& out, const ImuData& data) {
-  out << "x: " << data.x << " y: " << data.y << " z: " << data.z << std::endl;
+  auto to_time = [&data]() {
+    auto epoch = std::chrono::system_clock::time_point(
+        std::chrono::duration_cast<std::chrono::system_clock::duration>(data.timestamp));
+    std::time_t time = std::chrono::system_clock::to_time_t(epoch);
+    std::tm* local_tm = std::localtime(&time);
+    return std::put_time(local_tm, "%Y-%m-%d %H:%M:%S");
+  };
+
+  out << "a_x: " << data.a_x << " a_y: " << data.a_y << " a_z: " << data.a_z << " w_x: " << data.omega_x
+      << " w_y: " << data.omega_y << " w_z: " << data.omega_z << " T: " << data.temperature << " time: " << to_time()
+      << std::endl;
   return out;
 }
 
