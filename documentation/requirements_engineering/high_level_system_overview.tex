@@ -76,13 +76,37 @@ The OdometryApp will then process the IMU messages using there value and timesta
 Therefore the driver must save timestamps together with each coresponding IMU messages (\linkreq{8}).
 
 \subsection{Fault-tree analysis}
+Because the IMU Driver is functional safety critical, it is important to derive the relevant technical safety requirements.
+In this section we do not intend to create an exhaustive hazard and risk analysis with all possible failure modes.
+This shall be done once the real hardware and usecases are known.
+Instead we intend to create a superficial fault tree analysis to derive some of the most obvious safety relevant requirements.
+We follow a top-down approach postulating a wrong trajectory reconstruction in the OdometryApp as the top event.
+We categorize events as green where mitigations measures shall happens outside the IMU driver and red where the IMU driver shall provide the mitigation.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0 \textwidth]{diagrams/main_fault_tree.drawio.png}
-    \caption{Main fault tree}
+    \caption{Superficial trajectory reconstruction fault tree.}
     \label{fig-main-fault-tree}
 \end{figure}
+
+\begin{center}
+\begin{tabular}{|p{5cm}|p{10cm}|}
+\hline
+\textbf{Failure mode} & \textbf{Mitigation} \\
+\hline
+IMU driver not deserializing data properly. & shall be addressed by rigorous unit testing of the implementation. \\
+\hline
+Message from IMU are incomplete. & shall be address by \linkreq{TS1}. \\
+\hline
+The IMU baudrate is higher than expected & in this simple example, the mitigation consist in notifying the OdometryApp when it collect the IMU messages (\linkreq{TS2},\linkreq{TS3},\linkreq{TS4}). \\
+\hline
+The IMU message queue has reached max size & the mitigation consist in notifying with a counter of dropped message (\linkreq{TS5},\linkreq{TS6}). \\
+\hline
+The IMU has stop sending messages & the mitigation consist in setting the status to NO\_DATA (\linkreq{TS3},\linkreq{TS7}). \\
+\hline
+\end{tabular}
+\end{center}
 
 
 \subsection{Interface definition}
