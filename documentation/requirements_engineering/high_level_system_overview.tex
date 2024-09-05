@@ -18,6 +18,7 @@ We assume that the IMU will provide the following data:
     \item $\omega_z$ angular rate along its z-axis
     \item $T$ temperature of the sensor.
 \end{itemize}
+From this we derive requirements \hyperref[req-1]{1}.
 We assume that the physical sampling of all those values are made at the exact same time, respectively the difference between the sampling time is negligible.
 In other word we can timestamp the measurment time with a single timestamp $t_{mes}$.
 % file:///home/mhaselbauer/Downloads/lsm6ds3tr-c.pdf
@@ -40,7 +41,7 @@ We can obtain the physical values from their 16 bits representation from using t
 \begin{equation}
     T^{\circ_C} = 25+\frac{raw}{256}
 \end{equation}
-
+From this we derive requirements \hyperref[req-2]{2}, \hyperref[req-3]{3} and \hyperref[req-4]{4}.
 
 
 \subsection{Sequential interaction}

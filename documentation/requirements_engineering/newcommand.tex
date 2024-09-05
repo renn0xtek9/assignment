@@ -27,7 +27,4 @@
 #3 \\}
 
 % system requirements
-\newcommand{\sysreq}[3]{
-\textbf{Sys-Req:} #1 \\
-{\small ID: #2} \\
-\textbf{Rationale: }#3\\}
+\newcommand{\sysreq}[2]{\label{req-#1}\textbf{Sys-Req: #1} #2\newline\newline}
