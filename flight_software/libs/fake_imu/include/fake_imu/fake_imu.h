@@ -6,9 +6,12 @@
 
 #include <chrono>
 #include <cstddef>
+#include <cstdint>
 #include <iomanip>
 #include <queue>
 #include <string>
+
+const char kFakeImuSilDeviceFilePath[] = "/tmp/vserial_sil_side";
 
 /*! \brief Fake an IMU device for usage in Software in the loop context
  */

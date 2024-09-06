@@ -1,8 +1,8 @@
 // Copyright 2024 <Maxime Haselbauer>
 #include <fake_imu/fake_imu.h>
-#include <fake_imu/software_in_the_loop_constant.h>
 #include <messages/imu_data.h>
 #include <os_abstraction_layer/os_abstraction_layer.h>
+#include <uart_imu/uart_imu.h>
 
 #include <array>
 #include <cstddef>
@@ -21,7 +21,7 @@ void FakeImu::SimulateNormalOperation(const std::string& device_file_path,
   const auto start_timestamp = std::chrono::high_resolution_clock::now();
   while ((file_descriptor_ > 0) && (std::chrono::high_resolution_clock::now() - start_timestamp < duration_ms)) {
     SendImuData(messages::ImuData{});
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_BETWEEN_MEASUREMENTS_MS));
+    std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
   }
   if (file_descriptor_ > 0) {
     os_layer_.CloseDeviceFile(file_descriptor_);

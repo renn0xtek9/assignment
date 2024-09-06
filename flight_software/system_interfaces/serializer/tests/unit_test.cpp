@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 #include <messages/imu_data.h>
 #include <serializer/serializer.h>
+#include <uart_imu/uart_imu.h>
 
 #include <cstring>
 #include <string>
@@ -16,14 +17,15 @@ TEST(DeserializeUartData, DecodeFloatFromTwoBytes) {
   std::array<std::byte, 2> encoded_acceleration{std::byte{0x02}, std::byte{0x00}};
 
   const float decoded_acceleration =
-      serializer::uart::DecodeFloatFromTwoBytes(encoded_acceleration, LSB_SENSITIVITY_ACCELERATION);
-  EXPECT_NEAR(2.0F * LSB_SENSITIVITY_ACCELERATION, decoded_acceleration, LSB_SENSITIVITY_ACCELERATION);
+      serializer::uart::DecodeFloatFromTwoBytes(encoded_acceleration, uart_imu::LSB_SENSITIVITY_ACCELERATION);
+  EXPECT_NEAR(2.0F * uart_imu::LSB_SENSITIVITY_ACCELERATION, decoded_acceleration,
+              uart_imu::LSB_SENSITIVITY_ACCELERATION);
 }
 
 /*! \test Serialize imu float value to UART*/
 TEST(SerializeUartData, EncodeFloatOnTwoBytes) {
-  const std::array<std::byte, 2> encoded_acceleration =
-      serializer::uart::EncodeFloatOnTwoBytes(LSB_SENSITIVITY_ACCELERATION, LSB_SENSITIVITY_ACCELERATION);
+  const std::array<std::byte, 2> encoded_acceleration = serializer::uart::EncodeFloatOnTwoBytes(
+      uart_imu::LSB_SENSITIVITY_ACCELERATION, uart_imu::LSB_SENSITIVITY_ACCELERATION);
 
   std::array<std::byte, 2> expected_encoded_acceleration{std::byte{0x01}, std::byte{0x00}};
   EXPECT_EQ(expected_encoded_acceleration, encoded_acceleration);
@@ -31,8 +33,8 @@ TEST(SerializeUartData, EncodeFloatOnTwoBytes) {
 
 /*! \test Serialize IMU data to UART*/
 TEST(SerializeUartData, Serialize) {
-  const auto two_lsb_acc{2.0F * LSB_SENSITIVITY_ACCELERATION};
-  const auto two_lsb_ang{2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY};
+  const auto two_lsb_acc{2.0F * uart_imu::LSB_SENSITIVITY_ACCELERATION};
+  const auto two_lsb_ang{2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY};
 
   messages::ImuData imu_data{two_lsb_acc,
                              two_lsb_acc,
@@ -59,25 +61,28 @@ TEST(DeserializeUartData, Deserialize) {
       std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02},
       std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00},
       std::byte{0x02}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00}};
-  const messages::ImuData expected_imu_data{2.0F * LSB_SENSITIVITY_ACCELERATION,
-                                            2.0F * LSB_SENSITIVITY_ACCELERATION,
-                                            2.0F * LSB_SENSITIVITY_ACCELERATION,
-                                            2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
-                                            2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
-                                            2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
+  const messages::ImuData expected_imu_data{2.0F * uart_imu::LSB_SENSITIVITY_ACCELERATION,
+                                            2.0F * uart_imu::LSB_SENSITIVITY_ACCELERATION,
+                                            2.0F * uart_imu::LSB_SENSITIVITY_ACCELERATION,
+                                            2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY,
+                                            2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY,
+                                            2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY,
                                             TEMPERATURE_SENSOR_OFFSET,
                                             std::chrono::nanoseconds{0}};
 
-  EXPECT_NEAR(expected_imu_data.a_x, serializer::uart::Deserialize(serialized_data).a_x, LSB_SENSITIVITY_ACCELERATION);
-  EXPECT_NEAR(expected_imu_data.a_y, serializer::uart::Deserialize(serialized_data).a_y, LSB_SENSITIVITY_ACCELERATION);
-  EXPECT_NEAR(expected_imu_data.a_z, serializer::uart::Deserialize(serialized_data).a_z, LSB_SENSITIVITY_ACCELERATION);
+  EXPECT_NEAR(expected_imu_data.a_x, serializer::uart::Deserialize(serialized_data).a_x,
+              uart_imu::LSB_SENSITIVITY_ACCELERATION);
+  EXPECT_NEAR(expected_imu_data.a_y, serializer::uart::Deserialize(serialized_data).a_y,
+              uart_imu::LSB_SENSITIVITY_ACCELERATION);
+  EXPECT_NEAR(expected_imu_data.a_z, serializer::uart::Deserialize(serialized_data).a_z,
+              uart_imu::LSB_SENSITIVITY_ACCELERATION);
   EXPECT_NEAR(expected_imu_data.omega_x, serializer::uart::Deserialize(serialized_data).omega_x,
-              LSB_SENSITIVITY_ANGULAR_VELOCITY);
+              uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY);
   EXPECT_NEAR(expected_imu_data.omega_y, serializer::uart::Deserialize(serialized_data).omega_y,
-              LSB_SENSITIVITY_ANGULAR_VELOCITY);
+              uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY);
   EXPECT_NEAR(expected_imu_data.omega_z, serializer::uart::Deserialize(serialized_data).omega_z,
-              LSB_SENSITIVITY_ANGULAR_VELOCITY);
+              uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY);
   EXPECT_NEAR(expected_imu_data.temperature, serializer::uart::Deserialize(serialized_data).temperature,
-              LSB_SENSITIVITY_TEMPERATURE);
+              uart_imu::LSB_SENSITIVITY_TEMPERATURE);
   EXPECT_EQ(expected_imu_data.timestamp, serializer::uart::Deserialize(serialized_data).timestamp);
 }

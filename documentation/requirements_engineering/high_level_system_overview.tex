@@ -47,6 +47,8 @@ We can obtain the physical values from their 16 bits representation from using t
 From this we derive \linkreq{2}, \linkreq{3} and \linkreq{4}.
 
 
+
+
 \subsection{Sequential interaction}
 The system has following components:
 \begin{itemize}
@@ -74,16 +76,16 @@ The IMU driver will read this and recognize the start of a new data frame (\link
 The IMU driver will then poll the clock time and use it to timestamp the measurement (\linkreq{5}).
 The rest of the bytes are collected and then reconstructed into an IMU message.\\
 The execution of the IMU driver shall not block the OdometryApp. Thus they must run in separate threads (\linkreq{6}).
-To exchange data with the OdometryApp, the IMU driver shall stor data in a shared memory queue (\linkreq{7}).\\
+To exchange data with the OdometryApp, the IMU driver shall store data in a shared memory queue (\linkreq{7}).\\
 This process is repeated several times until the OdometryApp purge all message stored in the queue.\\
 The OdometryApp will then process the IMU messages using there value and timestamp.
 Therefore the driver must save timestamps together with each coresponding IMU messages (\linkreq{8}).
 
 \subsection{Fault-tree analysis}
 Because the IMU Driver is functional safety critical, it is important to derive the relevant technical safety requirements.
-In this section we do not intend to create an exhaustive hazard and risk analysis with all possible failure modes.
+This section does not intend to create an exhaustive hazard and risk analysis with all possible failure modes.
 This shall be done once the real hardware and usecases are known.
-Instead we intend to create a superficial fault tree analysis to derive some of the most obvious safety relevant requirements.
+Instead, its intend is to create a superficial fault tree analysis to derive some of the most obvious safety relevant requirements.
 We follow a top-down approach postulating a wrong trajectory reconstruction in the OdometryApp as the top event.
 We categorize events as green where mitigations measures shall happens outside the IMU driver and red where the IMU driver shall provide the mitigation.
 
@@ -145,3 +147,10 @@ To fulfull \linkreq{TS2}, \linkreq{TS3}, \linkreq{TS7},
 \begin{lstlisting}[style=cppstyle]
 enum class ImuDriverStatus { OK, BUSY, NO_DATA };
 \end{lstlisting}
+
+
+\subsubsection{Data frames}
+The IMU transmit 1 start bytes and then 7 values of 2 byte eachs.
+Transmission of each frame (bytes) takes 10 bits (accounting for start and stop bits).
+With the output data rate of 208 Hz, the minimum baud rate requirement is 31200 bit/s.
+We choose a typical baudrate of 38400 bit/s

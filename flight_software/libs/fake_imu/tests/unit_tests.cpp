@@ -1,7 +1,6 @@
 // Copyright 2024 <Maxime Haselbauer>
 
 #include <fake_imu/fake_imu.h>
-#include <fake_imu/software_in_the_loop_constant.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
