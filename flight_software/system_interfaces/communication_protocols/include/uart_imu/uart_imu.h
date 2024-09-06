@@ -24,6 +24,8 @@ constexpr int REQUIRED_MINIMUM_BAUDRATE{static_cast<int>(OUTPUT_DATA_RATE) * NUM
 constexpr int NUMBER_OF_FREE_BIT_PER_SECOND{BAUDRATE - REQUIRED_MINIMUM_BAUDRATE};
 constexpr std::chrono::microseconds SLEEP_TIME_BETWEEN_MESSAGES_US{BIT_DURATION_US * NUMBER_OF_FREE_BIT_PER_SECOND};
 
+constexpr std::byte START_BYTE{0xAA};
+
 }  // namespace uart_imu
 
 #endif  // UART_IMU_UART_IMU_H

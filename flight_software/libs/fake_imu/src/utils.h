@@ -4,6 +4,7 @@
 #include <messages/imu_data.h>
 
 #include <chrono>
+#include <cstddef>
 #include <iomanip>
 #include <ostream>
 
@@ -18,8 +19,12 @@ inline std::ostream& operator<<(std::ostream& out, const messages::ImuData& data
   };
 
   out << "a_x: " << data.a_x << " a_y: " << data.a_y << " a_z: " << data.a_z << " w_x: " << data.omega_x
-      << " w_y: " << data.omega_y << " w_z: " << data.omega_z << " T: " << data.temperature << " time: " << to_time()
-      << std::endl;
+      << " w_y: " << data.omega_y << " w_z: " << data.omega_z << " T: " << data.temperature << " time: " << to_time();
+  return out;
+}
+
+inline std::ostream& operator<<(std::ostream& out, const std::byte& byte) {
+  out << "0x" << std::hex << std::setfill('0') << std::setw(2) << std::to_integer<int>(byte);
   return out;
 }
 
