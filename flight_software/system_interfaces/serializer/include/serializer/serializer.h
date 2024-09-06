@@ -1,7 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
 #ifndef SERIALIZER_SERIALIZER_H
 #define SERIALIZER_SERIALIZER_H
-#include <messages/imu_message.h>
+#include <messages/imu_data.h>
 
 #include <array>
 #include <cstddef>
@@ -12,13 +12,13 @@ namespace uart {
  *  \param message The ImuData message to serialize
  *  \return The serialized message as an array of bytes
  */
-std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const ImuData& message);
+std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const messages::ImuData& message);
 
 /*! \brief Deserialize an imu message
  *  \param serialized_message The serialized message to deserialize
  *  \return The deserialized ImuData message
  */
-ImuData Deserialize(const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& serialized_message);
+messages::ImuData Deserialize(const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& serialized_message);
 
 /*! \brief Encode a float value on two bytes
  *   \param value the value to be encoded

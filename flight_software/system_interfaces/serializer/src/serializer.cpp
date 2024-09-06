@@ -1,5 +1,5 @@
 // Copyright 2024 <Maxime Haselbauer>
-#include <messages/imu_message.h>
+#include <messages/imu_data.h>
 #include <serializer/serializer.h>
 
 #include <cstring>
@@ -14,7 +14,7 @@ float OffsetTemperature(const float& temperature) {
   return temperature + TEMPERATURE_SENSOR_OFFSET;
 }
 
-std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const ImuData& message) {
+std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const messages::ImuData& message) {
   std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_message{};
 
   std::size_t index{0U};
@@ -35,8 +35,8 @@ std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const Im
   return serialized_message;
 }
 
-ImuData Deserialize(const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& serialized_message) {
-  ImuData deserialized_message{};
+messages::ImuData Deserialize(const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& serialized_message) {
+  messages::ImuData deserialized_message{};
   std::size_t index{0U};
 
   auto decode_data = [&serialized_message, &index](float& value, const float& lsb_sensitivity) {

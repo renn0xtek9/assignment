@@ -4,7 +4,7 @@
  */
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <messages/imu_message.h>
+#include <messages/imu_data.h>
 #include <serializer/serializer.h>
 
 #include <cstring>
@@ -34,14 +34,14 @@ TEST(SerializeUartData, Serialize) {
   const auto two_lsb_acc{2.0F * LSB_SENSITIVITY_ACCELERATION};
   const auto two_lsb_ang{2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY};
 
-  ImuData imu_data{two_lsb_acc,
-                   two_lsb_acc,
-                   two_lsb_acc,
-                   two_lsb_ang,
-                   two_lsb_ang,
-                   two_lsb_ang,
-                   TEMPERATURE_SENSOR_OFFSET,
-                   std::chrono::nanoseconds{0}};
+  messages::ImuData imu_data{two_lsb_acc,
+                             two_lsb_acc,
+                             two_lsb_acc,
+                             two_lsb_ang,
+                             two_lsb_ang,
+                             two_lsb_ang,
+                             TEMPERATURE_SENSOR_OFFSET,
+                             std::chrono::nanoseconds{0}};
 
   const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_data =
       serializer::uart::Serialize(imu_data);
@@ -59,14 +59,14 @@ TEST(DeserializeUartData, Deserialize) {
       std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02},
       std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00},
       std::byte{0x02}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00}};
-  const ImuData expected_imu_data{2.0F * LSB_SENSITIVITY_ACCELERATION,
-                                  2.0F * LSB_SENSITIVITY_ACCELERATION,
-                                  2.0F * LSB_SENSITIVITY_ACCELERATION,
-                                  2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
-                                  2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
-                                  2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
-                                  TEMPERATURE_SENSOR_OFFSET,
-                                  std::chrono::nanoseconds{0}};
+  const messages::ImuData expected_imu_data{2.0F * LSB_SENSITIVITY_ACCELERATION,
+                                            2.0F * LSB_SENSITIVITY_ACCELERATION,
+                                            2.0F * LSB_SENSITIVITY_ACCELERATION,
+                                            2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
+                                            2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
+                                            2.0F * LSB_SENSITIVITY_ANGULAR_VELOCITY,
+                                            TEMPERATURE_SENSOR_OFFSET,
+                                            std::chrono::nanoseconds{0}};
 
   EXPECT_NEAR(expected_imu_data.a_x, serializer::uart::Deserialize(serialized_data).a_x, LSB_SENSITIVITY_ACCELERATION);
   EXPECT_NEAR(expected_imu_data.a_y, serializer::uart::Deserialize(serialized_data).a_y, LSB_SENSITIVITY_ACCELERATION);

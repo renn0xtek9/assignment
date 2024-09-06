@@ -1,5 +1,5 @@
 SET (LIBNAME messages)
-SET (LIBHDRS include/messages/driver_status.h include/messages/imu_message.h)
+SET (LIBHDRS include/messages/imu_driver_status.h include/messages/imu_data.h)
 ADD_LIBRARY (messages INTERFACE ${LIBHDRS})
 
 TARGET_INCLUDE_DIRECTORIES (
