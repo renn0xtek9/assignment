@@ -3,6 +3,7 @@
 #include <fake_imu/fake_imu.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <uart_imu/uart_imu.h>
 
 #include <chrono>
 

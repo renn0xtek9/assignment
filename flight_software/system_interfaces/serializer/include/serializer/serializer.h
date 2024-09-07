@@ -2,6 +2,7 @@
 #ifndef SERIALIZER_SERIALIZER_H
 #define SERIALIZER_SERIALIZER_H
 #include <messages/imu_data.h>
+#include <uart_imu/uart_imu.h>
 
 #include <array>
 #include <cstddef>
@@ -12,21 +13,22 @@ namespace uart {
  *  \param message The ImuData message to serialize
  *  \return The serialized message as an array of bytes
  */
-std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const messages::ImuData& message);
+std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serialize(const messages::ImuData& message);
 
 /*! \brief Deserialize an imu message
  *  \param serialized_message The serialized message to deserialize
  *  \return The deserialized ImuData message
  */
-messages::ImuData Deserialize(const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& serialized_message);
+messages::ImuData Deserialize(
+    const std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& serialized_message);
 
 /*! \brief Encode a float value on two bytes
  *   \param value the value to be encoded
  *   \param lsb_sensitivity the least significant bit sensitivity of the sensor for this particular data
  *   \return array of two bytes representing the float value. The low byte is in the first position.
  */
-std::array<std::byte, NUMBER_OF_BYTES_FOR_FLOAT_ENCODING> EncodeFloatOnTwoBytes(const float& value,
-                                                                                const float& lsb_sensitivity);
+std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING> EncodeFloatOnTwoBytes(const float& value,
+                                                                                          const float& lsb_sensitivity);
 
 /*! \brief Decode an array of two bytes into a float value
  *
@@ -34,8 +36,9 @@ std::array<std::byte, NUMBER_OF_BYTES_FOR_FLOAT_ENCODING> EncodeFloatOnTwoBytes(
  *  \param lsb_sensitivity The least significant bit sensitivity of the sensor for this particular data
  *  \return The decoded float value
  */
-float DecodeFloatFromTwoBytes(const std::array<std::byte, NUMBER_OF_BYTES_FOR_FLOAT_ENCODING>& encoded_byte_array,
-                              const float& lsb_sensitivity);
+float DecodeFloatFromTwoBytes(
+    const std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING>& encoded_byte_array,
+    const float& lsb_sensitivity);
 
 }  // namespace uart
 }  // namespace serializer
