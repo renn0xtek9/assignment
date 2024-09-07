@@ -5,13 +5,9 @@
 #include <thread>
 namespace uart_imu {
 Driver::Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrction_layer,
-               std::queue<messages::ImuData>& imu_data_queue,
-               std::mutex& queue_mutex,
+               DriverContext& driver_context,
                const std::string device_file_path)
-    : os_layer_{os_abastrction_layer},
-      imu_data_queue_{imu_data_queue},
-      queue_mutex_{queue_mutex},
-      device_file_path_{device_file_path} {
+    : os_layer_{os_abastrction_layer}, driver_context_{driver_context}, device_file_path_{device_file_path} {
 }
 
 void Driver::Start() {
@@ -22,14 +18,23 @@ void Driver::Start() {
     Stop();
     return;
   }
+  driver_thread_ = std::thread(&Driver::Run, this);
 }
 void Driver::Stop() {
-  printf("IMU driver is stopped\n");
+  printf("Stopping IMU driver\n");
+  driver_must_stop = true;
+  if (driver_thread_.joinable()) {
+    driver_thread_.join();
+  }
+  printf("IMU driver stopped\n");
 }
 
 void Driver::Run() {
   printf("IMU driver step\n");
-  std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
+  driver_context_.SetStatus(messages::ImuDriverStatus::OK);
+  while (!driver_must_stop) {
+    std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
+  }
 }
 
 }  // namespace uart_imu

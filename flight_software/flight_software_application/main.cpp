@@ -2,6 +2,7 @@
 #include <flight_software_deployment_linux/flight_software_linux_configuration.h>
 #include <os_abstraction_layer/os_abstraction_layer.h>
 #include <uart_imu_driver/driver.h>
+#include <uart_imu_driver/driver_context.h>
 
 #include <iostream>
 #include <memory>
@@ -12,10 +13,9 @@
 
 int main(int, char**) {
   OsAbstractionLayer::OsAbstractionLayer os_abstraction_layer{};
-  std::mutex imu_message_queue_mutex{};
-  std::queue<messages::ImuData> imu_data_queue;
+  uart_imu::DriverContext imu_driver_context{};
 
-  uart_imu::Driver imu_driver{os_abstraction_layer, imu_data_queue, imu_message_queue_mutex, {kUartImuDeviceFilePath}};
+  uart_imu::Driver imu_driver{os_abstraction_layer, imu_driver_context, {kUartImuDeviceFilePath}};
   imu_driver.Start();
 
   return 0;
