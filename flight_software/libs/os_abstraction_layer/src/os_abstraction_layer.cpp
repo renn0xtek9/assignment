@@ -20,6 +20,11 @@ bool OsAbstractionLayer::CheckDeviceFileExists(const std::string& device_file_pa
   }
 }
 
+std::chrono::nanoseconds OsAbstractionLayer::TimeStampNow() const {
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(
+      std::chrono::high_resolution_clock::now().time_since_epoch());
+}
+
 int OsAbstractionLayer::OpenDeviceFile(const std::string& device_file_path) const {
   int file_descriptor = open(device_file_path.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
   if (file_descriptor < 0) {
@@ -41,6 +46,17 @@ int OsAbstractionLayer::ByteAvailableToRead(const int& file_descriptor) const {
     return -1;
   }
   return bytesAvailable;
+}
+
+void OsAbstractionLayer::ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const {
+  const ssize_t bytes_read = read(file_descriptor, ptr, size);
+  if (bytes_read > 0) {
+    return;
+  } else if (bytes_read == -1) {
+    std::cerr << "Failed to read from file descriptor: " << std::strerror(errno) << std::endl;
+  } else {
+    std::cerr << "End of file reached or no data available" << std::endl;
+  }
 }
 
 // LCOV_EXCL_STOP

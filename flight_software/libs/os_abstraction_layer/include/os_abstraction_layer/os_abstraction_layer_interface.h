@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <chrono>
 #include <functional>
 #include <iostream>
 #include <string>
@@ -18,6 +19,12 @@ class OsAbstractionLayerInterface {
    * \return true if the device file exists, false otherwise
    */
   virtual bool CheckDeviceFileExists(const std::string& device_file_path) const = 0;
+
+  /*! \fn std::chrono::nanoseconds TimeStampNow
+   * \brief Get the current time in nanoseconds
+   * \return current time in nanoseconds
+   */
+  virtual std::chrono::nanoseconds TimeStampNow() const = 0;
 
   /*! \fn int OpenDeviceFile
    *\brief This Open a device file
@@ -48,6 +55,12 @@ class OsAbstractionLayerInterface {
   \return number of bytes available to read
   */
   virtual int ByteAvailableToRead(const int& file_descriptor) const = 0;
+
+  /*! \fn void ReadFromFile
+   * \param file_descriptor file descriptor integer
+   * \param ptr pointer where to write
+   * \param size */
+  virtual void ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const = 0;
 };
 
 }  // namespace OsAbstractionLayer

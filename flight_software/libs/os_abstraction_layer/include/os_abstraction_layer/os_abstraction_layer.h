@@ -20,6 +20,12 @@ class OsAbstractionLayer : public OsAbstractionLayerInterface {
    */
   bool CheckDeviceFileExists(const std::string& device_file_path) const final;
 
+  /*! \fn std::chrono::nanoseconds TimeStampNow
+   * \brief Get the current time in nanoseconds
+   * \return current time in nanoseconds
+   */
+  std::chrono::nanoseconds TimeStampNow() const final;
+
   /*! \fn int OpenDeviceFile
    *\brief This Open a device file
    *\param device_file_path the path device file to check
@@ -49,6 +55,12 @@ class OsAbstractionLayer : public OsAbstractionLayerInterface {
   \return number of bytes available to read
   */
   int ByteAvailableToRead(const int& file_descriptor) const final;
+
+  /*! \fn void ReadFromFile
+   * \param file_descriptor file descriptor integer
+   * \param ptr pointer where to write
+   * \param size */
+  void ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const final;
 };
 
 }  // namespace OsAbstractionLayer

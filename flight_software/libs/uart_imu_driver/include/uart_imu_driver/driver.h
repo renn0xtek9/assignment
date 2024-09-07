@@ -4,9 +4,12 @@
 #include <messages/imu_data.h>
 #include <messages/imu_driver_status.h>
 #include <os_abstraction_layer/os_abstraction_layer.h>
+#include <uart_imu/uart_imu.h>
 #include <uart_imu_driver/driver_context.h>
 
+#include <array>
 #include <atomic>
+#include <cstddef>
 #include <mutex>
 #include <queue>
 #include <string>
@@ -30,6 +33,7 @@ class Driver {
   void Run();
   std::thread driver_thread_;
   std::atomic<bool> driver_must_stop{false};
+  std::array<std::byte, uart_imu::NUMBER_START_BYTE + uart_imu::NUMBER_OF_BITS_BY_MESSAGE> bytes_from_imu{};
 };
 }  // namespace uart_imu
 #endif  // UART_IMU_DRIVER_DRIVER_H

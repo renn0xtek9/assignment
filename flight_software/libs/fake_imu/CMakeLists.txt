@@ -6,6 +6,7 @@ CREATE_LIBRARY (
   include/${LIBNAME}/fake_imu.h
   LINK_LIBRARIES
   os_abstraction_layer
+  deployment_configuration
   messages)
 
 ADD_SUBDIRECTORY (tests)
