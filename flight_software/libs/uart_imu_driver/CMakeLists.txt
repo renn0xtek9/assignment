@@ -6,6 +6,7 @@ CREATE_LIBRARY (
   include/${LIBNAME}/driver.h
   LINK_LIBRARIES
   os_abstraction_layer
+  communication_protocols
   messages)
 
 ADD_SUBDIRECTORY (tests)

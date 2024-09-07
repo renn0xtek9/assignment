@@ -16,6 +16,7 @@ int main(int, char**) {
   std::queue<messages::ImuData> imu_data_queue;
 
   uart_imu::Driver imu_driver{os_abstraction_layer, imu_data_queue, imu_message_queue_mutex, {kUartImuDeviceFilePath}};
+  imu_driver.Start();
 
   return 0;
 }

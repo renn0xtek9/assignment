@@ -12,15 +12,20 @@ namespace uart_imu {
 class Driver {
  public:
   explicit Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrction_layer,
-                  const std::queue<messages::ImuData>& imu_data_queue,
-                  const std::mutex& queue_mutex,
+                  std::queue<messages::ImuData>& imu_data_queue,
+                  std::mutex& queue_mutex,
                   const std::string device_file_path);
+
+  void Start();
+  void Stop();
 
  private:
   const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_;
   std::queue<messages::ImuData>& imu_data_queue_;
   std::mutex& queue_mutex_;
   const std::string device_file_path_;
+  int file_descriptor_{-1};
+  void Run();
 };
 }  // namespace uart_imu
 #endif  // UART_IMU_DRIVER_DRIVER_H
