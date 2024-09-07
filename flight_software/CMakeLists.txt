@@ -6,7 +6,7 @@ SET (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ADD_SUBDIRECTORY (system_interfaces)
 ADD_SUBDIRECTORY (libs)
-ADD_SUBDIRECTORY (application)
+ADD_SUBDIRECTORY (flight_software_application)
 ADD_SUBDIRECTORY (software_in_the_loop)
 
 INCLUDE (Processes)

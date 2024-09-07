@@ -1,6 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
 #ifndef UART_IMU_UART_IMU_H
 #define UART_IMU_UART_IMU_H
+#include <chrono>
 #include <cstddef>
 namespace uart_imu {
 constexpr std::size_t NUMBER_OF_BYTES_FOR_FLOAT_ENCODING{2U};
