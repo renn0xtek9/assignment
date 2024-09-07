@@ -13,6 +13,11 @@ struct DriverContext {
   messages::ImuDriverStatus imu_driver_status{messages::ImuDriverStatus::NO_DATA};
   std::mutex status_mutex{};
 
+  void PushData(const messages::ImuData& data) {
+    std::lock_guard<std::mutex> lock(queue_mutex);
+    imu_data_queue.push(data);
+  }
+
   void SetStatus(messages::ImuDriverStatus status) {
     std::lock_guard<std::mutex> lock(status_mutex);
     imu_driver_status = status;

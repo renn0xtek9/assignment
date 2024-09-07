@@ -1,8 +1,10 @@
 // Copyright 2024 <Maxime Haselbauer>
 #include <messages/imu_data.h>
+#include <serializer/serializer.h>
 #include <uart_imu/uart_imu.h>
 #include <uart_imu_driver/driver.h>
 
+#include <algorithm>
 #include <thread>
 namespace uart_imu {
 Driver::Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrction_layer,
@@ -34,8 +36,9 @@ void Driver::Run() {
   printf("IMU driver step\n");
   driver_context_.SetStatus(messages::ImuDriverStatus::OK);
   // TODO(maxime) : truncate device file (we don't want to read old data)
+
+  std::vector<std::byte> bytes_stream_from_imu{};
   while (!driver_must_stop) {
-    messages::ImuData imu_data{};
     int bytes_available = os_layer_.ByteAvailableToRead(file_descriptor_);
     while (bytes_available < 1) {
       std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
@@ -44,20 +47,25 @@ void Driver::Run() {
         return;
       }
     }
-    imu_data.timestamp = os_layer_.TimeStampNow();
-    std::size_t bytes_to_read = std::min(static_cast<std::size_t>(bytes_available), sizeof(imu_data));
-    os_layer_.ReadFromFile(file_descriptor_, reinterpret_cast<char*>(bytes_from_imu.data()), bytes_to_read);
-    // std::array<std::byte, bytes_available> payload{};
-    // while (not first byte catch)
-    // {
-    //   // poll for byte available
-    // }
-    // take the timestamp
-    // sleep for duration of message
-    // check if enough byte avaialbe
-    // read all bytes into byte array
-    // convert the message
+    const auto timestamp = os_layer_.TimeStampNow();
 
+    std::vector<std::byte> byte_read_from_imu(bytes_available);
+    os_layer_.ReadFromFile(file_descriptor_, reinterpret_cast<char*>(byte_read_from_imu.data()), bytes_available);
+    bytes_stream_from_imu.insert(bytes_stream_from_imu.end(), byte_read_from_imu.begin(), byte_read_from_imu.end());
+    auto start_byte_iterator =
+        std::find(bytes_stream_from_imu.begin(), bytes_stream_from_imu.end(), uart_imu::START_BYTE);
+    bytes_stream_from_imu.erase(bytes_stream_from_imu.begin(), start_byte_iterator);
+    if (bytes_stream_from_imu.size() >= uart_imu::TOTAL_NUMBER_OF_BYTES) {
+      // we have a full message
+      std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> message_byte_array{};
+      std::copy(bytes_stream_from_imu.begin() + 1, bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES,
+                message_byte_array.begin());
+      auto imu_message = serializer::uart::Deserialize(message_byte_array);
+      imu_message.timestamp = timestamp;
+      driver_context_.PushData(imu_message);
+      bytes_stream_from_imu.erase(bytes_stream_from_imu.begin(),
+                                  bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES);
+    }
     std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
   }
 }

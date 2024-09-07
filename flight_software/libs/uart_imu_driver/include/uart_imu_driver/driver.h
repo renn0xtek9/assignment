@@ -33,7 +33,6 @@ class Driver {
   void Run();
   std::thread driver_thread_;
   std::atomic<bool> driver_must_stop{false};
-  std::array<std::byte, uart_imu::NUMBER_START_BYTE + uart_imu::NUMBER_OF_BITS_BY_MESSAGE> bytes_from_imu{};
 };
 }  // namespace uart_imu
 #endif  // UART_IMU_DRIVER_DRIVER_H
