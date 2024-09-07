@@ -42,13 +42,13 @@ TEST(SerializeUartData, Serialize) {
                              two_lsb_ang,
                              two_lsb_ang,
                              two_lsb_ang,
-                             TEMPERATURE_SENSOR_OFFSET,
+                             uart_imu::TEMPERATURE_SENSOR_OFFSET,
                              std::chrono::nanoseconds{0}};
 
-  const std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_data =
+  const std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_data =
       serializer::uart::Serialize(imu_data);
 
-  std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> expected_serialized_data{
+  std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> expected_serialized_data{
       std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02},
       std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00},
       std::byte{0x02}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00}};
@@ -57,7 +57,7 @@ TEST(SerializeUartData, Serialize) {
 
 /*! \test Deserialize IMU data from UART*/
 TEST(DeserializeUartData, Deserialize) {
-  std::array<std::byte, NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_data{
+  std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_data{
       std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02},
       std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00},
       std::byte{0x02}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00}};
@@ -67,7 +67,7 @@ TEST(DeserializeUartData, Deserialize) {
                                             2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY,
                                             2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY,
                                             2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY,
-                                            TEMPERATURE_SENSOR_OFFSET,
+                                            uart_imu::TEMPERATURE_SENSOR_OFFSET,
                                             std::chrono::nanoseconds{0}};
 
   EXPECT_NEAR(expected_imu_data.a_x, serializer::uart::Deserialize(serialized_data).a_x,

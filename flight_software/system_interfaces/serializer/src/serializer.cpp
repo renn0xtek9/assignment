@@ -43,7 +43,8 @@ messages::ImuData Deserialize(
   std::size_t index{0U};
 
   auto decode_data = [&serialized_message, &index](float& value, const float& lsb_sensitivity) {
-    index = std::min(index, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION - NUMBER_OF_BYTES_FOR_FLOAT_ENCODING);
+    index = std::min(index,
+                     uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION - uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING);
     std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING> encoded_value{serialized_message[index],
                                                                                       serialized_message[index + 1]};
     value = DecodeFloatFromTwoBytes(encoded_value, lsb_sensitivity);

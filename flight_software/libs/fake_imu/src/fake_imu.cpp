@@ -34,7 +34,8 @@ void FakeImu::SimulateNormalOperation(const std::string& device_file_path,
                                       const std::chrono::milliseconds& duration_ms) {
   file_descriptor_ = os_layer_.OpenDeviceFile(device_file_path);
   const auto start_timestamp = std::chrono::high_resolution_clock::now();
-  while ((file_descriptor_ > 0) && (std::chrono::high_resolution_clock::now() - start_timestamp < duration_ms)) {
+  auto time_since_start = std::chrono::high_resolution_clock::now() - start_timestamp;
+  while ((file_descriptor_ > 0) && ((std::chrono::high_resolution_clock::now() - start_timestamp) < duration_ms)) {
     SendImuData(GenerateFakeImuData());
     std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
   }
@@ -60,6 +61,7 @@ void FakeImu::SendImuData(const messages::ImuData& data) {
   std::cout << std::endl << "Sending IMU data: " << data << std::endl;
   std::array<std::byte, sizeof(data)> payload{};
   std::memcpy(payload.data(), &data, payload.size());
+  SendByte(uart_imu::START_BYTE);
   for (const auto& byte : payload) {
     if (file_descriptor_ < 1) {
       break;
