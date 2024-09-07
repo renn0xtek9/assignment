@@ -33,7 +33,7 @@ class OsAbstractionLayerInterface {
    */
   virtual int CloseDeviceFile(int file_descriptor) const = 0;
 
-  /*! \fn int Write
+  /*! \fn std::size_t Write
   * \brief Write bytes to a file descriptor
   \param file_descriptor file descriptor integer
   \param data data to be written
@@ -41,6 +41,13 @@ class OsAbstractionLayerInterface {
   \return number of bytes written
   */
   virtual std::size_t Write(const int& file_descriptor, const void* data, const std::size_t& size) const = 0;
+
+  /*! \fn int ByteAvailableToRead
+  \brief  Check how many bytes are available to read from a file descriptor
+  \param file_descriptor file descriptor integer
+  \return number of bytes available to read
+  */
+  virtual int ByteAvailableToRead(const int& file_descriptor) const = 0;
 };
 
 }  // namespace OsAbstractionLayer

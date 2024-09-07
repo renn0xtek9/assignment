@@ -1,5 +1,6 @@
 // Copyright 2024 <Maxime Haselbauer>
 #include <os_abstraction_layer/os_abstraction_layer.h>
+#include <sys/ioctl.h>
 
 #include <cstring>
 #include <string>
@@ -31,6 +32,17 @@ int OsAbstractionLayer::OpenDeviceFile(const std::string& device_file_path) cons
 std::size_t OsAbstractionLayer::Write(const int& file_descriptor, const void* data, const std::size_t& size) const {
   return write(file_descriptor, data, static_cast<size_t>(size));
 }
+
+int OsAbstractionLayer::ByteAvailableToRead(const int& file_descriptor) const {
+  int bytesAvailable{};
+  if (ioctl(file_descriptor, FIONREAD, &bytesAvailable) == -1) {
+    std::cerr << "Failed to get available bytes: " << std::strerror(errno) << std::endl;
+    close(file_descriptor);
+    return -1;
+  }
+  return bytesAvailable;
+}
+
 // LCOV_EXCL_STOP
 
 }  // namespace OsAbstractionLayer

@@ -42,6 +42,13 @@ class OsAbstractionLayer : public OsAbstractionLayerInterface {
    *\return number of bytes written
    */
   std::size_t Write(const int& file_descriptor, const void* data, const std::size_t& size) const final;
+
+  /*! \fn int ByteAvailableToRead
+  \brief  Check how many bytes are available to read from a file descriptor
+  \param file_descriptor file descriptor integer
+  \return number of bytes available to read
+  */
+  int ByteAvailableToRead(const int& file_descriptor) const final;
 };
 
 }  // namespace OsAbstractionLayer
