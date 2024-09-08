@@ -33,7 +33,6 @@ void Driver::Stop() {
 }
 
 void Driver::Run() {
-  printf("IMU driver step\n");
   driver_context_.SetStatus(messages::ImuDriverStatus::OK);
   // TODO(maxime) : truncate device file (we don't want to read old data)
 

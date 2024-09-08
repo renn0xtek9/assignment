@@ -7,7 +7,8 @@ CREATE_LIBRARY (
   LINK_LIBRARIES
   os_abstraction_layer
   deployment_configuration
-  messages)
+  messages
+  display_messages)
 
 ADD_SUBDIRECTORY (tests)
 

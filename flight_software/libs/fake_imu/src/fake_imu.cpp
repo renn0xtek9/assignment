@@ -1,4 +1,5 @@
 // Copyright 2024 <Maxime Haselbauer>
+#include <display_messages/imu_information.h>
 #include <fake_imu/fake_imu.h>
 #include <messages/imu_data.h>
 #include <os_abstraction_layer/os_abstraction_layer.h>
