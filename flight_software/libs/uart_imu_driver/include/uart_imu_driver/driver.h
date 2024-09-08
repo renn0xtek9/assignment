@@ -14,6 +14,7 @@
 #include <queue>
 #include <string>
 #include <thread>
+#include <vector>
 namespace uart_imu {
 
 class Driver {
@@ -26,13 +27,18 @@ class Driver {
   void Stop();
 
  private:
+  void FlushTheDeviceFile();
+  void PollAndReadAtLowFrequency();
+  void PollAndReadAtHighFrequency();
+  std::vector<std::byte> ReadBytesFromDevice();
+
   const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_;
   DriverContext& driver_context_;
   const std::string device_file_path_;
   int file_descriptor_{-1};
   void Run();
   std::thread driver_thread_;
-  std::atomic<bool> driver_must_stop{false};
+  std::atomic<bool> driver_must_stop_{false};
 };
 }  // namespace uart_imu
 #endif  // UART_IMU_DRIVER_DRIVER_H

@@ -21,6 +21,8 @@ constexpr std::chrono::microseconds BIT_DURATION_US{static_cast<int>(std::chrono
                                                     BAUDRATE};
 constexpr int NUMBER_OF_BITS_BY_FRAME{10};  // 1 start bit + 8 data bits + 1 stop bit
 constexpr int NUMBER_OF_BITS_BY_MESSAGE{NUMBER_OF_BITS_BY_FRAME * TOTAL_NUMBER_OF_BYTES};
+constexpr std::chrono::microseconds FRAME_DURATION_US{BIT_DURATION_US * NUMBER_OF_BITS_BY_FRAME};
+constexpr std::chrono::microseconds MESSAGE_DURATION_US{BIT_DURATION_US * NUMBER_OF_BITS_BY_MESSAGE};
 constexpr int REQUIRED_MINIMUM_BAUDRATE{static_cast<int>(OUTPUT_DATA_RATE) * NUMBER_OF_BITS_BY_MESSAGE};
 constexpr int NUMBER_OF_FREE_BIT_PER_SECOND{BAUDRATE - REQUIRED_MINIMUM_BAUDRATE};
 constexpr std::chrono::microseconds SLEEP_TIME_BETWEEN_MESSAGES_US{BIT_DURATION_US * NUMBER_OF_FREE_BIT_PER_SECOND};
