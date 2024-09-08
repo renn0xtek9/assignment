@@ -13,4 +13,10 @@ class UartImuDriverTest : public ::testing::Test {
   uart_imu::DriverContext imu_driver_context_{};
 };
 
+class UartImuDriverTestReadingFile : public UartImuDriverTest {
+ protected:
+  OsAbstractionLayer::MockReadingFile os_abstraction_layer_{};
+  uart_imu::DriverContext imu_driver_context_{};
+};
+
 #endif  // FIXTURES_H

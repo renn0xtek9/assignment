@@ -14,7 +14,7 @@ Driver::Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrc
 }
 
 void Driver::Start() {
-  printf("IMU dirver is running\n");
+  printf("IMU driver is running\n");
   file_descriptor_ = os_layer_.OpenDeviceFile(device_file_path_);
   if (file_descriptor_ < 0) {
     std::cout << "Driver could not open device file: " << device_file_path_ << std::endl;

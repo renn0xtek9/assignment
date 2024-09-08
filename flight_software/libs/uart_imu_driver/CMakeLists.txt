@@ -2,7 +2,6 @@ SET (LIBNAME uart_imu_driver)
 CREATE_LIBRARY (
   SRCS
   src/driver.cpp
-  src/driver_utils.cpp
   PUBLIC_HEADERS
   include/${LIBNAME}/driver.h
   LINK_LIBRARIES
