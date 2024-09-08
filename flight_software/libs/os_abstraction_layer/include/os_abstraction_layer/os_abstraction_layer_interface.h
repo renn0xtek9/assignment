@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <chrono>
 #include <functional>
 #include <iostream>
 #include <string>
@@ -19,6 +20,12 @@ class OsAbstractionLayerInterface {
    */
   virtual bool CheckDeviceFileExists(const std::string& device_file_path) const = 0;
 
+  /*! \fn std::chrono::nanoseconds TimeStampNow
+   * \brief Get the current time in nanoseconds
+   * \return current time in nanoseconds
+   */
+  virtual std::chrono::nanoseconds TimeStampNow() const = 0;
+
   /*! \fn int OpenDeviceFile
    *\brief This Open a device file
    *\param device_file_path the path device file to check
@@ -33,7 +40,7 @@ class OsAbstractionLayerInterface {
    */
   virtual int CloseDeviceFile(int file_descriptor) const = 0;
 
-  /*! \fn int Write
+  /*! \fn std::size_t Write
   * \brief Write bytes to a file descriptor
   \param file_descriptor file descriptor integer
   \param data data to be written
@@ -41,6 +48,19 @@ class OsAbstractionLayerInterface {
   \return number of bytes written
   */
   virtual std::size_t Write(const int& file_descriptor, const void* data, const std::size_t& size) const = 0;
+
+  /*! \fn int ByteAvailableToRead
+  \brief  Check how many bytes are available to read from a file descriptor
+  \param file_descriptor file descriptor integer
+  \return number of bytes available to read
+  */
+  virtual int ByteAvailableToRead(const int& file_descriptor) const = 0;
+
+  /*! \fn void ReadFromFile
+   * \param file_descriptor file descriptor integer
+   * \param ptr pointer where to write
+   * \param size */
+  virtual void ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const = 0;
 };
 
 }  // namespace OsAbstractionLayer

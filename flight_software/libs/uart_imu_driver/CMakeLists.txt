@@ -1,15 +1,14 @@
-SET (LIBNAME fake_imu)
+SET (LIBNAME uart_imu_driver)
 CREATE_LIBRARY (
   SRCS
-  src/fake_imu.cpp
+  src/driver.cpp
   PUBLIC_HEADERS
-  include/${LIBNAME}/fake_imu.h
+  include/${LIBNAME}/driver.h
   LINK_LIBRARIES
   os_abstraction_layer
-  deployment_configuration
+  communication_protocols
   serializer
-  messages
-  display_messages)
+  messages)
 
 ADD_SUBDIRECTORY (tests)
 
