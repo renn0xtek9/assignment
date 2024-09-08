@@ -32,7 +32,7 @@ void Driver::Stop() {
 }
 
 bool IsThereAtLeastOneMessage(const std::vector<std::byte>& bytes_stream_from_imu) {
-  bytes_stream_from_imu.size() >= uart_imu::TOTAL_NUMBER_OF_BYTES;
+  return bytes_stream_from_imu.size() >= uart_imu::TOTAL_NUMBER_OF_BYTES;
 }
 
 void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
@@ -49,10 +49,18 @@ void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
                               bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES);
 }
 
+void FlushTheDeviceFile(const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer, int file_descriptor) {
+  const int bytes_available = os_layer.ByteAvailableToRead(file_descriptor);
+  if (bytes_available > 0) {
+    std::vector<std::byte> byte_read_from_imu(bytes_available);
+    os_layer.ReadFromFile(file_descriptor, reinterpret_cast<char*>(byte_read_from_imu.data()), bytes_available);
+  }
+}
+
 void Driver::Run() {
   printf("IMU driver is running.\n");
   driver_context_.SetStatus(messages::ImuDriverStatus::OK);
-  // TODO(maxime) : truncate device file (we don't want to read old data)
+  FlushTheDeviceFile(os_layer_, file_descriptor_);
 
   std::vector<std::byte> bytes_stream_from_imu{};
   while (!driver_must_stop) {
@@ -80,3 +88,4 @@ void Driver::Run() {
 }
 
 }  // namespace uart_imu
+// Compare this snippet from flight_software/libs/uart_imu_driver/src/driver_context.cpp:
