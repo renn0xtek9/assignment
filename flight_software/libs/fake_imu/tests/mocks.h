@@ -23,6 +23,7 @@ class MockOsAbstractionLayer : public OsAbstractionLayerInterface {
   MOCK_METHOD(int, ByteAvailableToRead, (const int& file_descriptor), (const, override));
   MOCK_METHOD(std::chrono::nanoseconds, TimeStampNow, (), (const, override));
   MOCK_METHOD(void, ReadFromFile, (const int& file_descriptor, char* ptr, const std::size_t& size), (const, override));
+  MOCK_METHOD(void, TruncateFile, (const int& file_descriptor), (const, override));
 };
 
 }  // namespace OsAbstractionLayer
