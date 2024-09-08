@@ -27,10 +27,8 @@ class Driver {
   void Stop();
 
  private:
-  void FlushTheDeviceFile();
-  void PollAndReadAtLowFrequency();
-  void PollAndReadAtHighFrequency();
-  std::vector<std::byte> ReadBytesFromDevice();
+  void FlushTheDeviceFile() const;
+  std::vector<std::byte> ReadBytesFromDevice() const;
 
   const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_;
   DriverContext& driver_context_;

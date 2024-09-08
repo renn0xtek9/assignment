@@ -33,6 +33,12 @@ bool StartByteFound(const std::vector<std::byte> bytes_stream_from_imu) {
   return bytes_stream_from_imu.front() == uart_imu::START_BYTE;
 }
 
+void CleanStreamUpToStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
+  auto start_byte_iterator =
+      std::find(bytes_stream_from_imu.begin(), bytes_stream_from_imu.end(), uart_imu::START_BYTE);
+  bytes_stream_from_imu.erase(bytes_stream_from_imu.begin(), start_byte_iterator);
+}
+
 Driver::Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrction_layer,
                DriverContext& driver_context,
                const std::string device_file_path)
@@ -57,19 +63,11 @@ void Driver::Stop() {
   }
 }
 
-void Driver::FlushTheDeviceFile() {
-  printf("Flushing device \n");
-  fflush(stdout);
+void Driver::FlushTheDeviceFile() const {
   ReadBytesFromDevice();
 }
 
-void CleanStreamUpToStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
-  auto start_byte_iterator =
-      std::find(bytes_stream_from_imu.begin(), bytes_stream_from_imu.end(), uart_imu::START_BYTE);
-  bytes_stream_from_imu.erase(bytes_stream_from_imu.begin(), start_byte_iterator);
-}
-
-std::vector<std::byte> Driver::ReadBytesFromDevice() {
+std::vector<std::byte> Driver::ReadBytesFromDevice() const {
   const int bytes_available = os_layer_.ByteAvailableToRead(file_descriptor_);
   if (bytes_available < 1) {
     return {};
@@ -111,4 +109,3 @@ void Driver::Run() {
 }
 
 }  // namespace uart_imu
-// Compare this snippet from flight_software/libs/uart_imu_driver/src/driver_context.cpp:
