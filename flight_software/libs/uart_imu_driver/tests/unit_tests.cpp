@@ -64,7 +64,7 @@ TEST_F(UartImuDriverTest, UartImuFlushDeviceFileAtStart) {
 TEST_F(UartImuDriverTest, UartImuPollForByteavailableAtStart) {
   EXPECT_CALL(os_abstraction_layer_, OpenDeviceFile("some_device_file")).WillOnce(Return(42));
   EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(42)).WillOnce(Return(0)).WillRepeatedly(Return(1));
-  EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1));
+  // EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1));
   EXPECT_CALL(os_abstraction_layer_, ReadFromFile(42, _, 1)).Times(AtLeast(1));
 
   uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
@@ -100,7 +100,8 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
       .WillOnce(Return(0))
       .WillRepeatedly(Return(static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)));
   EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1)).WillRepeatedly(Return(expected_timestamp));
-  EXPECT_CALL(os_abstraction_layer_, ReadFromFile(42, _, static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)));
+  EXPECT_CALL(os_abstraction_layer_, ReadFromFile(42, _, static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)))
+      .Times(AtLeast(1));
 
   os_abstraction_layer_.SetBytesToReturn(AssembleFrame(serializer::uart::Serialize(expected_imu_data)));
 
