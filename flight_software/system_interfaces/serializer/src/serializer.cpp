@@ -3,6 +3,7 @@
 #include <serializer/serializer.h>
 #include <uart_imu/uart_imu.h>
 
+#include <algorithm>
 #include <cstring>
 #include <functional>
 namespace serializer {
@@ -24,7 +25,8 @@ std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> Serializ
     const auto encoded_value = EncodeFloatOnTwoBytes(value, lsb_sensitivity);
     index = std::min(index,
                      uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION - uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING);
-    std::memcpy(serialized_message.data() + index, encoded_value.data(), encoded_value.size());
+    const auto start_iteraror = serialized_message.begin() + index;
+    std::copy(encoded_value.begin(), encoded_value.end(), start_iteraror);
     index = index + uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING;
   };
   emplace_data(message.a_x, uart_imu::LSB_SENSITIVITY_ACCELERATION);
