@@ -7,6 +7,7 @@ CREATE_LIBRARY (
   LINK_LIBRARIES
   os_abstraction_layer
   deployment_configuration
+  serializer
   messages
   display_messages)
 

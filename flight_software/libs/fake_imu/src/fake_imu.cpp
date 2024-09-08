@@ -1,8 +1,10 @@
 // Copyright 2024 <Maxime Haselbauer>
+#include <display_messages/bytes.h>
 #include <display_messages/imu_information.h>
 #include <fake_imu/fake_imu.h>
 #include <messages/imu_data.h>
 #include <os_abstraction_layer/os_abstraction_layer.h>
+#include <serializer/serializer.h>
 #include <uart_imu/uart_imu.h>
 
 #include <array>
@@ -11,8 +13,6 @@
 #include <ctime>
 #include <iostream>
 #include <thread>
-
-#include "utils.h"
 
 FakeImu::FakeImu(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abstraction_layer)
     : os_layer_{os_abstraction_layer} {
@@ -60,8 +60,7 @@ void FakeImu::SendByte(const std::byte& byte) {
 
 void FakeImu::SendImuData(const messages::ImuData& data) {
   std::cout << std::endl << "Sending IMU data: " << data << std::endl;
-  std::array<std::byte, sizeof(data)> payload{};
-  std::memcpy(payload.data(), &data, payload.size());
+  std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> payload{serializer::uart::Serialize(data)};
   SendByte(uart_imu::START_BYTE);
   for (const auto& byte : payload) {
     if (file_descriptor_ < 1) {

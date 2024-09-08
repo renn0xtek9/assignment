@@ -20,7 +20,7 @@ using namespace std::chrono_literals;  // NOLINT
 std::atomic<bool> g_stop_required{false};
 
 void signalHandler(int signum) {
-  std::cout << std::endl << "The eagle has landed... (Stopping flight software)" << std::endl;
+  std::cout << std::endl << "Shutdown from user" << std::endl;
   g_stop_required = true;
 }
 
@@ -70,6 +70,8 @@ int main(int, char**) {
     DisplayImuInformation(imu_message_read_from_driver_queue, imu_driver_status);
   }
   imu_driver.Stop();
+
+  std::cout << std::endl << "The eagle has landed... (Stopping flight software)" << std::endl;
 
   return 0;
 }
