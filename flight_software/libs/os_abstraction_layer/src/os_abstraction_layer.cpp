@@ -59,6 +59,12 @@ void OsAbstractionLayer::ReadFromFile(const int& file_descriptor, char* ptr, con
   }
 }
 
+void OsAbstractionLayer::TruncateFile(const int& file_descriptor) const {
+  if (ftruncate(file_descriptor, 0) == -1) {
+    std::cerr << "Failed to truncate file: " << std::strerror(errno) << std::endl;
+  }
+}
+
 // LCOV_EXCL_STOP
 
 }  // namespace OsAbstractionLayer

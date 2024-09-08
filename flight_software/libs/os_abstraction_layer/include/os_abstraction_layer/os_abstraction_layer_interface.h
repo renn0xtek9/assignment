@@ -61,6 +61,11 @@ class OsAbstractionLayerInterface {
    * \param ptr pointer where to write
    * \param size */
   virtual void ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const = 0;
+
+  /*! \fn void TruncateFile
+   * \param  file_descriptor file descriptor integer
+   */
+  virtual void TruncateFile(const int& file_descriptor) const = 0;
 };
 
 }  // namespace OsAbstractionLayer
