@@ -37,18 +37,15 @@ void RetrieveMessage(uart_imu::DriverContext& driver_context,
     driver_context.imu_data_queue.pop();
   }
 }
-
 void DisplayImuInformation(std::queue<messages::ImuData>& imu_message, messages::ImuDriverStatus& imu_driver_status) {
   std::cout << std::endl << "Driver status: " << imu_driver_status << std::endl;
   if (imu_message.empty()) {
     std::cout << "No new IMU data available" << std::endl;
     return;
   } else {
-    while (!imu_message.empty()) {
-      std::cout << "New IMU data: " << imu_message.front() << std::endl;
-      imu_message.pop();
-    }
+    std::cout << imu_message.size() << " new IMU data. Most recent one: " << imu_message.front() << std::endl;
   }
+  imu_message = std::queue<messages::ImuData>();
 }
 
 int main(int, char**) {
@@ -63,7 +60,7 @@ int main(int, char**) {
   std::queue<messages::ImuData> imu_message_read_from_driver_queue{};
   messages::ImuDriverStatus imu_driver_status{};
   while (!g_stop_required) {
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(1s);
     RetrieveDriverStatus(imu_driver_context, imu_driver_status);
     RetrieveMessage(imu_driver_context, imu_message_read_from_driver_queue);
 
