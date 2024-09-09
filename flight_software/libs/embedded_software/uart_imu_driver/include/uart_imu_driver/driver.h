@@ -17,6 +17,15 @@
 #include <vector>
 namespace uart_imu {
 
+/*! \brief Push new messages in the driver context queue.
+ * \param bytes_stream_from_imu vector of bytes from the IMU. This will be empty as messages are pushed.
+ * \param driver_context driver context to push the messages to.
+ * \param timestamp timestamp of the messages.
+ */
+void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
+                        DriverContext& driver_context,
+                        const std::chrono::nanoseconds& timestamp);
+
 /*! \brief Driver class for the IMU
  */
 class Driver {
