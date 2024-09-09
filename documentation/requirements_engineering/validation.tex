@@ -3,7 +3,7 @@
 This section describe the software in the loop infrastructure and test procedure for the IMU driver. This is as follow:
 \begin{itemize}
     \item The tester allocate two device files to simulate virtual serial port.
-    \item The tester starts the sil application. The application immediately starts to write fake imu measurements data to the virtual device file.
+    \item The tester starts the software in the loop application. The application immediately starts to write fake imu measurements data to the virtual device file.
     \item The tester starts the test (dummy) application that contains the driver. The driver application reads data from the virtual device file.
     \item The test application process the IMU message and determine if the test is a success or failure depending on the content.
 \end{itemize}
