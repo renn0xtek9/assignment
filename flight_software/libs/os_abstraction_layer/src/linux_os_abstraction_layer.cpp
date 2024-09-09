@@ -8,16 +8,16 @@
 namespace OsAbstractionLayer {
 
 // LCOV_EXCL_START
-int OsAbstractionLayer::CloseDeviceFile(int file_descriptor) const {
+int LinuxOsAbstractionLayer::CloseDeviceFile(int file_descriptor) const {
   return close(file_descriptor);
 }
 
-std::chrono::nanoseconds OsAbstractionLayer::TimeStampNow() const {
+std::chrono::nanoseconds LinuxOsAbstractionLayer::TimeStampNow() const {
   return std::chrono::duration_cast<std::chrono::nanoseconds>(
       std::chrono::high_resolution_clock::now().time_since_epoch());
 }
 
-int OsAbstractionLayer::OpenDeviceFile(const std::string& device_file_path) const {
+int LinuxOsAbstractionLayer::OpenDeviceFile(const std::string& device_file_path) const {
   int file_descriptor = open(device_file_path.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
   if (file_descriptor < 0) {
     std::cerr << "Error opening device file: " << strerror(errno) << std::endl;
@@ -26,11 +26,13 @@ int OsAbstractionLayer::OpenDeviceFile(const std::string& device_file_path) cons
   return file_descriptor;
 }
 
-std::size_t OsAbstractionLayer::Write(const int& file_descriptor, const void* data, const std::size_t& size) const {
+std::size_t LinuxOsAbstractionLayer::Write(const int& file_descriptor,
+                                           const void* data,
+                                           const std::size_t& size) const {
   return write(file_descriptor, data, static_cast<size_t>(size));
 }
 
-int OsAbstractionLayer::ByteAvailableToRead(const int& file_descriptor) const {
+int LinuxOsAbstractionLayer::ByteAvailableToRead(const int& file_descriptor) const {
   int bytesAvailable{};
   if (ioctl(file_descriptor, FIONREAD, &bytesAvailable) == -1) {
     std::cerr << "Failed to get available bytes: " << std::strerror(errno) << std::endl;
@@ -40,7 +42,7 @@ int OsAbstractionLayer::ByteAvailableToRead(const int& file_descriptor) const {
   return bytesAvailable;
 }
 
-void OsAbstractionLayer::ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const {
+void LinuxOsAbstractionLayer::ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const {
   const ssize_t bytes_read = read(file_descriptor, ptr, size);
   if (bytes_read > 0) {
     return;
