@@ -11,7 +11,9 @@
 #include <cstring>
 #include <string>
 
-/*! \test shall decode float value from two bytes values w.r.t LSB sensitivity*/
+/*! \test shall decode float value from two bytes values w.r.t LSB sensitivity
+ * Sys-Req: 2, Sys-Req: 3, Sys-Req: 4
+ */
 TEST(DecodeFloatFromTwoBytes, DecodeFloatFromTwoBytes) {
   // An encoded acceleration with value of 2 times the lsb sensitivity with the high byte in second position.
   std::array<std::byte, 2> encoded_acceleration{std::byte{0x02}, std::byte{0x00}};

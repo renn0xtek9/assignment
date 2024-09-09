@@ -1,4 +1,6 @@
 \documentclass[a4paper,10pt]{article}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
 \usepackage[utf8]{inputenc}
 \usepackage{charter}
 \usepackage[english]{babel}
@@ -36,7 +38,7 @@
 
 \include{code_style.tex}
 
-\title{Requirements}
+\title{Implementation of a driver for an Inertial Measurement Unit with UART communication protocol.}
 \author{Maxime Haselbauer}
 \addbibresource{./library.bib}
 \setlength{\parindent}{0pt}
@@ -47,11 +49,12 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Requirements analysis document for the development of an IMU driver.
+A draft of system and requirements analysis of an IMU driver communicating of UART.
 \end{abstract}
 \printnomenclature
 \printglossaries
 
+\include{deliverables.tex}
 \include{introduction.tex}
 \include{high_level_system_overview.tex}
 \include{system_requirements.tex}

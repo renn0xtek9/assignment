@@ -1,0 +1,46 @@
+\section{Description of deliverables}
+The deliverable contains:
+\begin{itemize}
+    \item The present document.
+    \item A \texttt{flight-software-0.0.1-Release-Linux.deb} package containing release executables.
+    \item A \texttt{flight-software-0.0.1-Release-Linux.deb} package containing debug executables together with extended code documentation for developer (doxygen, build process documentaition.)
+\end{itemize}
+
+The source code to generate those artifacts is hosted on \href{https://github.com/renn0xtek9/assignment}{github}.
+The debian package shall be installable on a Linux Ubuntu 22.04 system.
+It contains two executables:
+\begin{itemize}
+    \item \texttt{flight\_software}: an application that integrates the IMU Driver and display driver information and latest driver messages received.
+    \item \texttt{software\_in\_the\_loop}: an application that simulate a fake IMU device and write data to virtual serial device file.
+\end{itemize}
+To setup the virtual device file the user must first run \texttt{setup\_software\_in\_the\_loop.sh} also provided within the package.
+This shall setup the virtual serial device file \texttt{/tmp/vserial\_flight\_software\_side} and \texttt{/tmp/vserial\_sil\_side}. \newline
+The user can then run \newline \texttt{flight\_software} \newline in a terminal and then \newline \texttt{software\_in\_the\_loop --duration\_ms=5000} \newline in another terminal. \\
+This send some fake (constant) values in the virtual serial device file for 5 seconds.
+The IMU message data will be displayed on the \texttt{flight\_software} terminal. Values should be nearly equal with respect to the LSB sensitivity.
+
+\subsection{Code description}
+The heart of the driver logic is located in the \href{https://github.com/renn0xtek9/assignment/blob/master/flight_software/libs/embedded_software/uart_imu_driver/src/driver.cpp}{\texttt{driver.cpp}} file.
+The github repository shall be freely accessible. It is recommend to use the "Devcontainer" feature of Visual Studio Code if one want to create a developer environement.
+Building instruction are provided in the \href{https://github.com/renn0xtek9/assignment/blob/master/CONTRIBUTING.md}{CONTRIBUTING.md} file.
+
+\subsection{Driver architecture}
+The driver is instatiated with:
+\begin{itemize}
+    \item a \texttt{OsAbstractionLayerInterface} object.
+    \item a \texttt{DriverContext} object.
+    \item an absolute path to the device file.
+\end{itemize}
+
+The OS abstraction layer abstracts all interaction with the actual operating system.
+This is done for easy mocking and achieving 100\% code coverage (only line coverage, not branch coverage so far).
+
+The driver context is the object that exchange data with the client application.
+In an actual integration, this functionality is usually provided by the publisher/subscriber functionality of the middelware.\\
+The driver has a \texttt{Start()} method that will spin a \texttt{Run()} in its own thread.
+Calling the \text{Stop()} method shall stop it.\\
+The conversion of message is done in the \href{https://github.com/renn0xtek9/assignment/blob/master/flight_software/libs/embedded_software/serializer/src/serializer.cpp}{serializer.cpp}.
+
+The following rest of this documents is a non finalized analysis of the requirements and the design of the driver.
+In a real context this work should order of magnitude more detailed.\\
+I will be happy to discuss this work with you in a meeting.

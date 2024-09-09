@@ -25,5 +25,7 @@ IMUDriver -> VirtualDevFileDriver: Read IMU measurements
 
 DummyOdometryApp -> IMUDriver: Consume IMU message queue
 
+DummyOdometryApp -> Tester: Display message content
+
 
 @enduml

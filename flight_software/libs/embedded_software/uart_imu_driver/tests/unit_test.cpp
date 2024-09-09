@@ -135,7 +135,9 @@ void ExpectMesssagesAreEqual(const messages::ImuData& expected_imu_data, const m
   EXPECT_EQ(expected_imu_data.timestamp, imu_data.timestamp) << "IMU data timestamp should be the same";
 }
 
-/*! \test UartImuDriver: intake bytes comming from device file.*/
+/*! \test UartImuDriver: create messages from valid byte stream.
+ * Sys-Req: TS1
+ */
 TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
   const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
   messages::ImuData expected_imu_data = CreateExpectedImuData(expected_timestamp);

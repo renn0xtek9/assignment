@@ -1,17 +1,17 @@
 \section{High level system overview}
-This section addresses high level system design especially.
+This section is a superficial high level system design. It addresses.
 \begin{itemize}
     \item data structure and data flow
     \item sequential interaction between the system subcomponents
     \item superficial fault tree analysis
     \item software interface definitions
 \end{itemize}
-The information gathered will be used to derive system requirements \ref{sec:system_requirements}.
+The goal is to derive system requirements \ref{sec:system_requirements}.
 
 \subsection{Data structure and data flow}
-We propose the following characteristics for the IMU. Those are inspired for \cite{lm6ds3}. This is a MEMS IMU that is neither a space grade nor UART capable, but provide good characeristic of a basic IMU.
-
-We assume that the IMU will provide the following data:
+We propose the following characteristics for the IMU. Those are inspired from \cite{lm6ds3}.
+This is a MEMS IMU that is neither a space grade nor UART capable, but provide good characeristics of a basic IMU.
+The IMU will provide the following data:
 \begin{itemize}
     \item $a_x$ acceleration on the x-axis
     \item $a_y$ acceleration on the y-axis
@@ -24,10 +24,9 @@ We assume that the IMU will provide the following data:
 From this we derive requirements \linkreq{1}.
 We assume that the physical sampling of all those values are made at the exact same time, respectively the difference between the sampling time is negligible.
 In other word we can timestamp the measurment time with a single timestamp $t_{mes}$.
-% file:///home/mhaselbauer/Downloads/lsm6ds3tr-c.pdf
-All values are represented by 16 bits values, sent on the UART protocol in 2 bytes, with the least significant byte first.
+According to the datasheets all values are represented by 16 bits values.
 The temperature sensor has a sensitivity with 256 LSB $^{\circ}C$.
-We assume the IMU would be configure with:
+We assume the IMU would be configured with:
 \begin{itemize}
     \item a range of $\pm 16g$ for the accelerometer. The sensitivity is $0.488~mg/LSB$
     \item a range of $\pm 250^{\circ}/s$ for the gyroscope. The sensitivity is $8.75~mdps/LSB$
@@ -35,19 +34,7 @@ We assume the IMU would be configure with:
 \end{itemize}
 
 We can obtain the physical values from their 16 bits representation from using the following formula.
-\begin{equation}
-    a = \frac{raw}{2^{15}} \times 16
-\end{equation}
-\begin{equation}
-    \omega = \frac{raw}{2^{15}} \times 250
-\end{equation}
-\begin{equation}
-    T^{\circ_C} = 25+\frac{raw}{256}
-\end{equation}
 From this we derive \linkreq{2}, \linkreq{3} and \linkreq{4}.
-
-
-
 
 \subsection{Sequential interaction}
 The system has following components:
@@ -68,13 +55,17 @@ The system has following components:
     \label{fig-high-level-nominal}
 \end{figure}
 
-Fig.\ref{fig-high-level-nominal} describe the interaction sequence in the normal operation mode:\\
+Fig.\ref{fig-high-level-nominal} describes the interaction sequence in the normal operation mode:\\
 The IMU makes a new measurment at $t_{mes1}$.
-It then sends a start byte to the UART to notify receiver of upcomming data frame.
-When the first 8 bits of the start byte have been received, the low level UART driver of the kernel will write the byte to the device file.
-The IMU driver will read this and recognize the start of a new data frame (\linkreq{9}).
-The IMU driver will then poll the clock time and use it to timestamp the measurement (\linkreq{5}).
-The rest of the bytes are collected and then reconstructed into an IMU message.\\
+It then sends a start byte to the UART to notify receiver of upcomming data frame. (See \linkreq{TS1}).
+Once the first frame containing the start byte have been received, the low level UART driver of the kernel will write the byte to the device file.
+Meanwhile the IMU driver is polling the kernel for the number of bytes available in the device file at high frequency. (See green line.)
+As soon as one byte is availalbe, the IMU driver will read it and check if it is the start byte to detect the start of a new message (\linkreq{9}).
+The IMU driver will then retrieve the clock time and use it to timestamp the measurement (\linkreq{5}).
+The IMU then idle for the transfer duration of the message.
+The rest of the bytes are collected by then low-level driver.
+The end of the IMU driver idling time shall coincide with the last byte of the message written in device file.
+The IMU driver read all the bytes and convert them to an IMU message (internal software representation).
 The execution of the IMU driver shall not block the OdometryApp. Thus they must run in separate threads (\linkreq{6}).
 To exchange data with the OdometryApp, the IMU driver shall store data in a shared memory queue (\linkreq{7}).\\
 This process is repeated several times until the OdometryApp purge all message stored in the queue.\\
@@ -87,7 +78,7 @@ This section does not intend to create an exhaustive hazard and risk analysis wi
 This shall be done once the real hardware and usecases are known.
 Instead, its intend is to create a superficial fault tree analysis to derive some of the most obvious safety relevant requirements.
 We follow a top-down approach postulating a wrong trajectory reconstruction in the OdometryApp as the top event.
-We categorize events as green where mitigations measures shall happens outside the IMU driver and red where the IMU driver shall provide the mitigation.
+We categorize events as green where mitigations measures shall arguably happen outside the IMU driver and red where the IMU driver shall provide the mitigation.
 
 \begin{figure}[H]
     \centering
@@ -103,7 +94,7 @@ We categorize events as green where mitigations measures shall happens outside t
 \hline
 IMU driver not deserializing data properly. & shall be addressed by rigorous unit testing of the implementation. \\
 \hline
-Message from IMU are incomplete. & shall be address by \linkreq{TS1}. \\
+Message from IMU are incomplete. & shall be address by recognizing the start of a message using a start byte \linkreq{TS1}. \\
 \hline
 The IMU baudrate is higher than expected & in this simple example, the mitigation consist in notifying the OdometryApp when it collect the IMU messages (\linkreq{TS2},\linkreq{TS3},\linkreq{TS4}). \\
 \hline
@@ -111,8 +102,40 @@ The IMU message queue has reached max size & the queue shall not grow indefinite
 \hline
 The IMU has stop sending messages & the mitigation consist in setting the status to NO\_DATA (\linkreq{TS3},\linkreq{TS7}). \\
 \hline
+Delay between physical measure and timestamp & this lag will always be present, especially with our chosen implementation of a high-level, polling driver.
+To mitigate this, we implement a polling mechanism that poll at higher frequency when expecting the arrival of a start byte to mitigate the delay(\linkreq{TS9}). \\
+\hline
 \end{tabular}
 \end{center}
+
+\subsubsection{Definition of data frames and protocol.}
+Every bytes is transmitted in a UART frame of 10 bits (1 start bit, 8 data bits, 1 stop bit).
+\newline
+\newline
+\begin{bytefield}[bitwidth=4.1em]{10}
+    \bitheader[endianness=little]{9,8,1,0}\\
+    \bitbox{1}{Start bit}
+    \bitbox{8}{Data bits}
+    \bitbox{1}{Stop bit}
+\end{bytefield}
+
+The IMU transmit 1 start bytes and then 7 values of 2 byte eachs (14 data bytes in total).
+The complete message consist if 15 frames: 1 start frame (S) and 14 data frames (D1 to D7).
+\newline
+\newline
+\begin{bytefield}[bitwidth=2.1em]{15}
+    \bitheader[endianness=little]{14,1,0}\\
+    \bitbox{1}{S}
+    \bitbox{14}{D1 to D7}
+\end{bytefield}
+
+This amounts to 150 bits per message.
+With an output data rate of 208 Hz, the required data rate is 31200 bit/s.
+We choose a typical baudrate of 38400 bit/s.
+This lead to a bit transmission duration of 26 $\mu$s.
+The complete message (150 bits) transmission duration is 3906 $\mu$s.
+With 208 Hz, the duration between the start of two messages is 4897 $\mu$s.
+This leads to an approximative 900 $\mu$s of idle time between two messages.
 
 
 \subsection{Software interface definition}
@@ -135,11 +158,12 @@ There is no requirements on the resolution of the timestamp. This shall be deriv
 For the sake of higher accuracy we choose nanoseconds.
 Since the measurement would come at 208 Hz only we could potentially microseconds or even miliseconds.\\
 
-To fulfill \linkreq{TS8} and \linkreq{TS5}.
+To fulfill \linkreq{TS5}.
+\textbf{Note:} the queue will not fullfill \linkreq{TS8}. One could use a custom implementation later on, or this could be provided by a middelware.
 \begin{lstlisting}[style=cppstyle]
 struct ImuDataQueue {
   std::uint32_t dropped_message{0};
-  SizedCapedQueue<ImuData> data_queue{};
+  std::queue<ImuData> data_queue{};
 };
 \end{lstlisting}
 
@@ -147,33 +171,3 @@ To fulfull \linkreq{TS2}, \linkreq{TS3}, \linkreq{TS7},
 \begin{lstlisting}[style=cppstyle]
 enum class ImuDriverStatus { OK, BUSY, NO_DATA };
 \end{lstlisting}
-
-
-\subsubsection{Data frames}
-Every bytes is transmitted in a UART frame of 10 bits (1 start bit, 8 data bits, 1 stop bit).
-\newline
-\newline
-\begin{bytefield}[bitwidth=4.1em]{10}
-    \bitheader[endianness=little]{9,8,1,0}\\
-    \bitbox{1}{Start bit}
-    \bitbox{8}{Data bits}
-    \bitbox{1}{Stop bit}
-\end{bytefield}
-
-The IMU transmit 1 start bytes and then 7 values of 2 byte eachs (14 data bytes in total).
-The complete message consist if 15 frames: 1 start frame (S) and 14 data frames (D1 to D7).
-\newline
-\newline
-\begin{bytefield}[bitwidth=2.1em]{15}
-    \bitheader[endianness=little]{14,1,0}\\
-    \bitbox{1}{S}
-    \bitbox{14}{D1 to D7}
-\end{bytefield}
-
-This amount to 150 bits per message.
-With an output data rate of 208 Hz, the required data rate is 31200 bit/s.
-We choose a typical baudrate of 38400 bit/s.
-This lead to a bit transmission duration of 26 $\mu$s.
-The complete message (150 bits) transmission duration is 3906 $\mu$s.
-With 208 Hz, the duration between the start of two messages is 4897 $\mu$s.
-This leads to an approximative 900 $\mu$s of idle time between two messages.
