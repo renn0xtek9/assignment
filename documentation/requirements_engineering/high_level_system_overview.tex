@@ -1,36 +1,36 @@
 \section{High level system overview}
-This section is a superficial high level system design. It addresses.
+This section is a superficial high level system design analysis. It addresses.
 \begin{itemize}
     \item data structure and data flow
     \item sequential interaction between the system subcomponents
     \item superficial fault tree analysis
     \item software interface definitions
 \end{itemize}
-The goal is to derive system requirements \ref{sec:system_requirements}.
+\textbf{The goal is to derive some of the most basic system requirements (see section: \ref{sec:system_requirements}).}
 
 \subsection{Data structure and data flow}
 We propose the following characteristics for the IMU. Those are inspired from \cite{lm6ds3}.
 This is a MEMS IMU that is neither a space grade nor UART capable, but provide good characeristics of a basic IMU.
 The IMU will provide the following data:
 \begin{itemize}
-    \item $a_x$ acceleration on the x-axis
-    \item $a_y$ acceleration on the y-axis
-    \item $a_z$ acceleration on the z -axis
-    \item $\omega_x$ angular rate along its x-axis
-    \item $\omega_y$ angular rate along its y-axis
-    \item $\omega_z$ angular rate along its z-axis
+    \item $a_x$ acceleration on the x-axis.
+    \item $a_y$ acceleration on the y-axis.
+    \item $a_z$ acceleration on the z -axis.
+    \item $\omega_x$ angular rate along its x-axis.
+    \item $\omega_y$ angular rate along its y-axis.
+    \item $\omega_z$ angular rate along its z-axis.
     \item $T$ temperature of the sensor.
 \end{itemize}
 From this we derive requirements \linkreq{1}.
 We assume that the physical sampling of all those values are made at the exact same time, respectively the difference between the sampling time is negligible.
-In other word we can timestamp the measurment time with a single timestamp $t_{mes}$.
+In other word we can timestamp the measurement time with a single timestamp $t_{mes}$.
 According to the datasheets all values are represented by 16 bits values.
 The temperature sensor has a sensitivity with 256 LSB $^{\circ}C$.
 We assume the IMU would be configured with:
 \begin{itemize}
     \item a range of $\pm 16g$ for the accelerometer. The sensitivity is $0.488~mg/LSB$
     \item a range of $\pm 250^{\circ}/s$ for the gyroscope. The sensitivity is $8.75~mdps/LSB$
-    \item a output data rate of 208 Hz.
+    \item an output data rate of 208 Hz.
 \end{itemize}
 
 We can obtain the physical values from their 16 bits representation from using the following formula.
@@ -44,7 +44,7 @@ The system has following components:
     \item the operating system kernel.
     \item the device file that will be created by the kernel to describe the device.
     \item the IMU driver software component.
-    \item the IMU message queue.
+    \item the IMU message queue. This is typically a part of the middelware.
     \item the odometry application that will consume the IMU data.
 \end{itemize}
 
@@ -58,27 +58,29 @@ The system has following components:
 Fig.\ref{fig-high-level-nominal} describes the interaction sequence in the normal operation mode:\\
 The IMU makes a new measurment at $t_{mes1}$.
 It then sends a start byte to the UART to notify receiver of upcomming data frame. (See \linkreq{TS1}).
-Once the first frame containing the start byte have been received, the low level UART driver of the kernel will write the byte to the device file.
-Meanwhile the IMU driver is polling the kernel for the number of bytes available in the device file at high frequency. (See green line.)
-As soon as one byte is availalbe, the IMU driver will read it and check if it is the start byte to detect the start of a new message (\linkreq{9}).
-The IMU driver will then retrieve the clock time and use it to timestamp the measurement (\linkreq{5}).
-The IMU then idle for the transfer duration of the message.
-The rest of the bytes are collected by then low-level driver.
-The end of the IMU driver idling time shall coincide with the last byte of the message written in device file.
-The IMU driver read all the bytes and convert them to an IMU message (internal software representation).
+Once the first frame containing the start byte has been received, the low level UART driver of the kernel will write the byte to the device file.
+Meanwhile the IMU driver is polling the kernel for the number of bytes available in the device file at high frequency. (See green lifeline.)
+As soon as one byte is available, the IMU driver will read it and check if it is the start byte to detect the start of a new message (\linkreq{TS1}).
+The IMU driver will then retrieve the clock time and use it to timestamp the measurement (\linkreq{5}).\\
+Note that this approach has an intrinsic delay between the physical measurement and the timestamp.
+Low-level drivers would perform better in this regard. In a real application it would be anyway mandatory to derive the maximum allowable difference from the requirements of the client (OdometryApp).\\
+The IMU then idles for the duration of the transfer of the full message message. (See blue lifeline).
+The rest of the bytes are collected by the low-level driver.
+The end of the IMU driver idling duration shall coincide with the last byte of the message being written in the device file.
+The IMU driver then reads all the bytes and convert them to an IMU message (internal software representation).
 The execution of the IMU driver shall not block the OdometryApp. Thus they must run in separate threads (\linkreq{6}).
 To exchange data with the OdometryApp, the IMU driver shall store data in a shared memory queue (\linkreq{7}).\\
-This process is repeated several times until the OdometryApp purge all message stored in the queue.\\
-The OdometryApp will then process the IMU messages using there value and timestamp.
+The memory will be locked during this process (See red lifeline).
+This process is repeated several times until the OdometryApp purges all messages stored in the queue.\\
+The OdometryApp will then process the IMU messages using their values and timestamps.
 Therefore the driver must save timestamps together with each coresponding IMU messages (\linkreq{8}).
 
 \subsection{Fault-tree analysis}
 Because the IMU Driver is functional safety critical, it is important to derive the relevant technical safety requirements.
 This section does not intend to create an exhaustive hazard and risk analysis with all possible failure modes.
-This shall be done once the real hardware and usecases are known.
-Instead, its intend is to create a superficial fault tree analysis to derive some of the most obvious safety relevant requirements.
+Instead, it intends is to create a very superficial fault tree analysis to derive some of the most obvious safety relevant requirements.
 We follow a top-down approach postulating a wrong trajectory reconstruction in the OdometryApp as the top event.
-We categorize events as green where mitigations measures shall arguably happen outside the IMU driver and red where the IMU driver shall provide the mitigation.
+We categorize events as green, where mitigations measures shall arguably happen outside the IMU driver, and red where the IMU driver shall provide the mitigation.
 
 \begin{figure}[H]
     \centering
@@ -94,9 +96,9 @@ We categorize events as green where mitigations measures shall arguably happen o
 \hline
 IMU driver not deserializing data properly. & shall be addressed by rigorous unit testing of the implementation. \\
 \hline
-Message from IMU are incomplete. & shall be address by recognizing the start of a message using a start byte \linkreq{TS1}. \\
+Message from IMU are incomplete. & shall be addressed by detecting the start of a message using a start byte \linkreq{TS1}. \\
 \hline
-The IMU baudrate is higher than expected & in this simple example, the mitigation consist in notifying the OdometryApp when it collect the IMU messages (\linkreq{TS2},\linkreq{TS3},\linkreq{TS4}). \\
+The IMU baudrate is higher than expected & in this simple example, the mitigation consist in notifying the OdometryApp when it collects the IMU messages (\linkreq{TS2},\linkreq{TS3},\linkreq{TS4}). \\
 \hline
 The IMU message queue has reached max size & the queue shall not grow indefinitely to prevent memory allocation issue(\linkreq(TS8)). The mitigation for the possible drop of message consist in notifying with a counter of dropped message (\linkreq{TS5},\linkreq{TS6}). \\
 \hline
@@ -119,8 +121,8 @@ Every bytes is transmitted in a UART frame of 10 bits (1 start bit, 8 data bits,
     \bitbox{1}{Stop bit}
 \end{bytefield}
 
-The IMU transmit 1 start bytes and then 7 values of 2 byte eachs (14 data bytes in total).
-The complete message consist if 15 frames: 1 start frame (S) and 14 data frames (D1 to D7).
+The IMU transmit 1 start bytes and then 7 values of 2 bytes each (14 data bytes in total).
+The complete message consist of 15 frames: 1 start frame (S) and 14 data frames (D1 to D7).
 \newline
 \newline
 \begin{bytefield}[bitwidth=2.1em]{15}
@@ -132,7 +134,7 @@ The complete message consist if 15 frames: 1 start frame (S) and 14 data frames 
 This amounts to 150 bits per message.
 With an output data rate of 208 Hz, the required data rate is 31200 bit/s.
 We choose a typical baudrate of 38400 bit/s.
-This lead to a bit transmission duration of 26 $\mu$s.
+This leads to a bit transmission duration of 26 $\mu$s.
 The complete message (150 bits) transmission duration is 3906 $\mu$s.
 With 208 Hz, the duration between the start of two messages is 4897 $\mu$s.
 This leads to an approximative 900 $\mu$s of idle time between two messages.
@@ -154,11 +156,11 @@ struct ImuData {
 };
 \end{lstlisting}
 \textbf{Note:} on x86 the float type is 32 bits long which is more than the strictly necessary 16 bits. We keep float type to be compliant with the C++17 standard library.
-There is no requirements on the resolution of the timestamp. This shall be derived from the actual use cases of the OdometryApp.
+There are no requirements on the resolution of the timestamp. This shall be derived from the actual use cases of the OdometryApp.
 For the sake of higher accuracy we choose nanoseconds.
 Since the measurement would come at 208 Hz only we could potentially microseconds or even miliseconds.\\
 
-To fulfill \linkreq{TS5}.
+To fulfill \linkreq{TS5} we propose the following structure.
 \textbf{Note:} the queue will not fullfill \linkreq{TS8}. One could use a custom implementation later on, or this could be provided by a middelware.
 \begin{lstlisting}[style=cppstyle]
 struct ImuDataQueue {
