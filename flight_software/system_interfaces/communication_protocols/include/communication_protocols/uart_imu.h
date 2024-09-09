@@ -1,4 +1,5 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file This file contains configuration constants for the IMU UART communication protocol.*/
 #ifndef COMMUNICATION_PROTOCOLS_UART_IMU_H
 #define COMMUNICATION_PROTOCOLS_UART_IMU_H
 #include <chrono>

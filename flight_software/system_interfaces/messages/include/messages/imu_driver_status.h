@@ -4,6 +4,7 @@
 
 namespace messages {
 
+/*! \brief Enum class for the status of the IMU driver.*/
 enum class ImuDriverStatus { OK, BUSY, NO_DATA };
 
 }  // namespace messages
