@@ -1,5 +1,5 @@
 // Copyright 2024 <Maxime Haselbauer>
-#include <os_abstraction_layer/os_abstraction_layer.h>
+#include <os_abstraction_layer/linux_os_abstraction_layer.h>
 #include <sys/ioctl.h>
 
 #include <cstring>
@@ -10,14 +10,6 @@ namespace OsAbstractionLayer {
 // LCOV_EXCL_START
 int OsAbstractionLayer::CloseDeviceFile(int file_descriptor) const {
   return close(file_descriptor);
-}
-
-bool OsAbstractionLayer::CheckDeviceFileExists(const std::string& device_file_path) const {
-  if (access(device_file_path.c_str(), F_OK) == 0) {
-    return true;
-  } else {
-    return false;
-  }
 }
 
 std::chrono::nanoseconds OsAbstractionLayer::TimeStampNow() const {
@@ -56,12 +48,6 @@ void OsAbstractionLayer::ReadFromFile(const int& file_descriptor, char* ptr, con
     std::cerr << "Failed to read from file descriptor: " << std::strerror(errno) << std::endl;
   } else {
     std::cerr << "End of file reached or no data available" << std::endl;
-  }
-}
-
-void OsAbstractionLayer::TruncateFile(const int& file_descriptor) const {
-  if (ftruncate(file_descriptor, 0) == -1) {
-    std::cerr << "Failed to truncate file: " << std::strerror(errno) << std::endl;
   }
 }
 

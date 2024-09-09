@@ -1,7 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
 #include <display_messages/imu_information.h>
 #include <flight_software_deployment_linux/flight_software_linux_configuration.h>
-#include <os_abstraction_layer/os_abstraction_layer.h>
+#include <os_abstraction_layer/linux_os_abstraction_layer.h>
 #include <uart_imu_driver/driver.h>
 #include <uart_imu_driver/driver_context.h>
 

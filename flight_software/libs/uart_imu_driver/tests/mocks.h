@@ -15,7 +15,6 @@ namespace OsAbstractionLayer {
 
 class MockOsAbstractionLayer : public OsAbstractionLayerInterface {
  public:
-  MOCK_METHOD(bool, CheckDeviceFileExists, (const std::string& device_file_path), (const, override));
   MOCK_METHOD(int, OpenDeviceFile, (const std::string& device_file_path), (const, override));
   MOCK_METHOD(int, CloseDeviceFile, (int file_descriptor), (const, override));
   MOCK_METHOD(std::size_t,
@@ -25,7 +24,6 @@ class MockOsAbstractionLayer : public OsAbstractionLayerInterface {
   MOCK_METHOD(int, ByteAvailableToRead, (const int& file_descriptor), (const, override));
   MOCK_METHOD(std::chrono::nanoseconds, TimeStampNow, (), (const, override));
   MOCK_METHOD(void, ReadFromFile, (const int& file_descriptor, char* ptr, const std::size_t& size), (const, override));
-  MOCK_METHOD(void, TruncateFile, (const int& file_descriptor), (const, override));
 };
 
 class MockReadingFile : public OsAbstractionLayerInterface {
@@ -45,7 +43,6 @@ class MockReadingFile : public OsAbstractionLayerInterface {
       }
     });
   }
-  MOCK_METHOD(bool, CheckDeviceFileExists, (const std::string& device_file_path), (const, override));
   MOCK_METHOD(int, OpenDeviceFile, (const std::string& device_file_path), (const, override));
   MOCK_METHOD(int, CloseDeviceFile, (int file_descriptor), (const, override));
   MOCK_METHOD(std::size_t,
@@ -55,7 +52,6 @@ class MockReadingFile : public OsAbstractionLayerInterface {
   MOCK_METHOD(int, ByteAvailableToRead, (const int& file_descriptor), (const, override));
   MOCK_METHOD(std::chrono::nanoseconds, TimeStampNow, (), (const, override));
   MOCK_METHOD(void, ReadFromFile, (const int& file_descriptor, char* ptr, const std::size_t& size), (const, override));
-  MOCK_METHOD(void, TruncateFile, (const int& file_descriptor), (const, override));
 
   void SetBytesToReturn(const std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES>& bytes) {
     bytes_to_return_ = bytes;
