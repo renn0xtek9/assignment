@@ -64,7 +64,6 @@ TEST_F(UartImuDriverTest, UartImuFlushDeviceFileAtStart) {
 TEST_F(UartImuDriverTest, UartImuPollForByteavailableAtStart) {
   EXPECT_CALL(os_abstraction_layer_, OpenDeviceFile("some_device_file")).WillOnce(Return(42));
   EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(42)).WillOnce(Return(0)).WillRepeatedly(Return(1));
-  // EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1));
   EXPECT_CALL(os_abstraction_layer_, ReadFromFile(42, _, 1)).Times(AtLeast(1));
 
   uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
