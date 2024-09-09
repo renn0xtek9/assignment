@@ -1,7 +1,7 @@
 SET (LIBNAME deployment_configuration)
 SET (
   LIBHDRS
-  include/software_in_the_loop/sil_configuration.h
+  include/software_in_the_loop/software_in_the_loop_configuration.h
   include/flight_software_deployment_linux/flight_software_linux_configuration.h
 )
 
@@ -13,4 +13,5 @@ SET_TARGET_PROPERTIES (${LIBNAME} PROPERTIES PUBLIC_HEADER "${LIBHDRS}")
 INSTALL (TARGETS ${LIBNAME} PUBLIC_HEADER DESTINATION include/${LIBNAME}/
                                           COMPONENT Libraries)
 
-INSTALL (PROGRAMS ${CMAKE_SOURCE_DIR}/scripts/start_sil.sh DESTINATION bin)
+INSTALL (PROGRAMS ${CMAKE_SOURCE_DIR}/scripts/setup_software_in_the_loop.sh
+         DESTINATION bin)

@@ -1,7 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
 #include <fake_imu/fake_imu.h>
 #include <os_abstraction_layer/linux_os_abstraction_layer.h>
-#include <software_in_the_loop/sil_configuration.h>
+#include <software_in_the_loop/software_in_the_loop_configuration.h>
 
 #include <chrono>
 #include <string>

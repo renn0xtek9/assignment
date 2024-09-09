@@ -4,7 +4,7 @@
 #include <fake_imu/fake_imu.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <software_in_the_loop/sil_configuration.h>
+#include <software_in_the_loop/software_in_the_loop_configuration.h>
 
 #include <chrono>
 
