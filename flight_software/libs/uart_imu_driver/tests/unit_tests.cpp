@@ -113,21 +113,28 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
   EXPECT_TRUE(!imu_driver_context_.imu_data_queue.empty()) << "IMU data should be in the queue";
   const auto imu_data = imu_driver_context_.imu_data_queue.front();
   EXPECT_NEAR(expected_imu_data.a_x, imu_data.a_x, uart_imu::LSB_SENSITIVITY_ACCELERATION)
-      << "IMU data a_x should not differ more then the LSB sensitivity";
+      << "IMU data a_x should not differ more then the LSB sensitivity" << expected_imu_data.a_x
+      << " vs: " << imu_data.a_x << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ACCELERATION;
   EXPECT_NEAR(expected_imu_data.a_y, imu_data.a_y, uart_imu::LSB_SENSITIVITY_ACCELERATION)
-      << "IMU data a_y should not differ more then the LSB sensitivity";
+      << "IMU data a_y should not differ more then the LSB sensitivity" << expected_imu_data.a_y
+      << " vs: " << imu_data.a_y << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ACCELERATION;
   EXPECT_NEAR(expected_imu_data.a_z, imu_data.a_z, uart_imu::LSB_SENSITIVITY_ACCELERATION)
-      << "IMU data a_y should not differ more then the LSB sensitivity";
+      << "IMU data a_y should not differ more then the LSB sensitivity" << expected_imu_data.a_z
+      << " vs: " << imu_data.a_z << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ACCELERATION;
 
   EXPECT_NEAR(expected_imu_data.omega_x, imu_data.omega_x, uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY)
-      << "IMU data omega_x should not differ more then the LSB sensitivity";
+      << "IMU data omega_x should not differ more then the LSB sensitivity" << expected_imu_data.omega_x
+      << " vs: " << imu_data.omega_x << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY;
   EXPECT_NEAR(expected_imu_data.omega_y, imu_data.omega_y, uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY)
-      << "IMU data omega_y should not differ more then the LSB sensitivity";
+      << "IMU data omega_y should not differ more then the LSB sensitivity" << expected_imu_data.omega_y
+      << " vs: " << imu_data.omega_y << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY;
   EXPECT_NEAR(expected_imu_data.omega_z, imu_data.omega_z, uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY)
-      << "IMU data omega_z should not differ more then the LSB sensitivity";
+      << "IMU data omega_z should not differ more then the LSB sensitivity" << expected_imu_data.omega_z
+      << " vs: " << imu_data.omega_z << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY;
 
   EXPECT_NEAR(expected_imu_data.temperature, imu_data.temperature, uart_imu::LSB_SENSITIVITY_TEMPERATURE)
-      << "IMU data temperature should not differ more then the LSB sensitivity";
+      << "IMU data temperature should not differ more then the LSB sensitivity" << expected_imu_data.temperature
+      << " vs: " << imu_data.temperature << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_TEMPERATURE;
 
   EXPECT_EQ(expected_imu_data.timestamp, imu_data.timestamp) << "IMU data timestamp should be the same";
 }
