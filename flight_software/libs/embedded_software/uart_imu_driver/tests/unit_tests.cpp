@@ -1,11 +1,11 @@
 // Copyright 2024 <Maxime Haselbauer>
 
+#include <communication_protocols/uart_imu.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <messages/imu_data.h>
 #include <messages/imu_driver_status.h>
 #include <serializer/serializer.h>
-#include <uart_imu/uart_imu.h>
 #include <uart_imu_driver/driver.h>
 #include <uart_imu_driver/driver_context.h>
 

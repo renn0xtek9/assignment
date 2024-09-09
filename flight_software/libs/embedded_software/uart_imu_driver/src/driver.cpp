@@ -1,7 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+#include <communication_protocols/uart_imu.h>
 #include <messages/imu_data.h>
 #include <serializer/serializer.h>
-#include <uart_imu/uart_imu.h>
 #include <uart_imu_driver/driver.h>
 
 #include <algorithm>

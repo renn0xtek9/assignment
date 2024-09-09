@@ -1,5 +1,5 @@
 SET (LIBNAME communication_protocols)
-SET (LIBHDRS include/uart_imu/uart_imu.h)
+SET (LIBHDRS include/${LIBNAME}/uart_imu.h)
 ADD_LIBRARY (${LIBNAME} INTERFACE ${LIBHDRS})
 
 TARGET_INCLUDE_DIRECTORIES (

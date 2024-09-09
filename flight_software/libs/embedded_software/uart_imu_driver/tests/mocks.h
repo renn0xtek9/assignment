@@ -2,10 +2,10 @@
 #ifndef MOCKS_H
 #define MOCKS_H
 
+#include <communication_protocols/uart_imu.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <os_abstraction_layer/os_abstraction_layer_interface.h>
-#include <uart_imu/uart_imu.h>
 
 #include <algorithm>
 #include <functional>

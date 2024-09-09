@@ -2,11 +2,11 @@
 /*! \file unit_test.cpp
  *\brief unit tests of serializer
  */
+#include <communication_protocols/uart_imu.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <messages/imu_data.h>
 #include <serializer/serializer.h>
-#include <uart_imu/uart_imu.h>
 
 #include <cstring>
 #include <string>

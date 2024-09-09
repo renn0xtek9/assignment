@@ -1,8 +1,8 @@
 // Copyright 2024 <Maxime Haselbauer>
 #ifndef SERIALIZER_SERIALIZER_H
 #define SERIALIZER_SERIALIZER_H
+#include <communication_protocols/uart_imu.h>
 #include <messages/imu_data.h>
-#include <uart_imu/uart_imu.h>
 
 #include <array>
 #include <cstddef>

@@ -1,6 +1,6 @@
 // Copyright 2024 <Maxime Haselbauer>
-#ifndef UART_IMU_UART_IMU_H
-#define UART_IMU_UART_IMU_H
+#ifndef COMMUNICATION_PROTOCOLS_UART_IMU_H
+#define COMMUNICATION_PROTOCOLS_UART_IMU_H
 #include <chrono>
 #include <cstddef>
 namespace uart_imu {
@@ -37,4 +37,4 @@ constexpr std::byte START_BYTE{0xAA};
 
 }  // namespace uart_imu
 
-#endif  // UART_IMU_UART_IMU_H
+#endif  // COMMUNICATION_PROTOCOLS_UART_IMU_H
