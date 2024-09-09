@@ -6,7 +6,9 @@
 
 namespace messages {
 
-/*! \brief IMU messages produced by the IMU UART driver.*/
+/*! \brief IMU messages produced by the IMU UART driver.
+ * Fullfill Sys-Req: 1
+ */
 struct ImuData {
   float a_x{};                          /**< Acceleration along x (g) */
   float a_y{};                          /**< Acceleration along y (g) */

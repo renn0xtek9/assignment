@@ -11,8 +11,10 @@
 #include <cstring>
 #include <string>
 
-/*! \test Deserialize imu float value from UART*/
-TEST(DeserializeUartData, DecodeFloatFromTwoBytes) {
+/*! \test shall decode float value from two bytes values w.r.t LSB sensitivity
+ * Sys-Req: 2, Sys-Req: 3, Sys-Req: 4
+ */
+TEST(DecodeFloatFromTwoBytes, DecodeFloatFromTwoBytes) {
   // An encoded acceleration with value of 2 times the lsb sensitivity with the high byte in second position.
   std::array<std::byte, 2> encoded_acceleration{std::byte{0x02}, std::byte{0x00}};
 
@@ -22,8 +24,8 @@ TEST(DeserializeUartData, DecodeFloatFromTwoBytes) {
               uart_imu::LSB_SENSITIVITY_ACCELERATION);
 }
 
-/*! \test Serialize imu float value to UART*/
-TEST(SerializeUartData, EncodeFloatOnTwoBytes) {
+/*! \test shall encode 32 bit float value on two bytes w.r.t LSB sensitivity*/
+TEST(EncodeFloatOnTwoBytes, EncodeFloatOnTwoBytes) {
   const std::array<std::byte, 2> encoded_acceleration = serializer::uart::EncodeFloatOnTwoBytes(
       uart_imu::LSB_SENSITIVITY_ACCELERATION, uart_imu::LSB_SENSITIVITY_ACCELERATION);
 
@@ -31,8 +33,8 @@ TEST(SerializeUartData, EncodeFloatOnTwoBytes) {
   EXPECT_EQ(expected_encoded_acceleration, encoded_acceleration);
 }
 
-/*! \test Serialize IMU data to UART*/
-TEST(SerializeUartData, Serialize) {
+/*! \test shall serialize IMU message data to UART byte array*/
+TEST(Serialize, Serialize) {
   const auto two_lsb_acc{2.0F * uart_imu::LSB_SENSITIVITY_ACCELERATION};
   const auto two_lsb_ang{2.0F * uart_imu::LSB_SENSITIVITY_ANGULAR_VELOCITY};
 
@@ -55,8 +57,8 @@ TEST(SerializeUartData, Serialize) {
   EXPECT_EQ(expected_serialized_data, serialized_data);
 }
 
-/*! \test Deserialize IMU data from UART*/
-TEST(DeserializeUartData, Deserialize) {
+/*! \test shall deserialize byte array from UART to IMU message data*/
+TEST(Deserialize, Deserialize) {
   std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> serialized_data{
       std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02},
       std::byte{0x00}, std::byte{0x02}, std::byte{0x00}, std::byte{0x02}, std::byte{0x00},

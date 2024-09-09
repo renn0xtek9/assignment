@@ -1,1 +1,3 @@
 # IMU UART Driver
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)

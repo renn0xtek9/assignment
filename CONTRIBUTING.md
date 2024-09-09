@@ -4,49 +4,42 @@
 
 ```bash
 .
-├── CONTRIBUTING.md # Main documentation for Developers
-├── README.md # Short project description
-├── Makefile # Main makefile. Orchestrate the various build (using CMake)
-├── .devcontainer
-│   ├── ... # Docker file and scripts for the development container
-├── .github
-│   ├── ... # GitHub Continuous Integration files.
-├── CMakeLists.txt
-├── cmake_modules
-│   ├── ... # all cmake modules needed in the CMakeLists
-├── conanfile.txt
-├── conan_profiles
-│   └── ... # Conan build profiles.
-├── flight_software # Client (x86) application
-│   ├── application
-│   │   ├── .. # Main files
-│   ├── CMakeLists.txt
-│   ├── libs
-│   │   ├── ... # Libraries
-│   └── system_interfaces
-│       ├── ... # System interfaces (describe data exchange between subsystems)
-├── documentation
-│   ├── development_process
-│   │   ├── ... # Documentation of development process
-│   │   └── software_build_process
-│   │       ├── ... # Documentation of build process itself
+├── cmake_modules # All cmake modules
+├── documentation # All project documentation
+│   ├── development_process # documentation of build and development process
 │   ├── doxygen
-│   │   ├── ... # code documentation
-│   ├── requirements_engineering
-│   │   ├── ... # Latex document for requirements engineering
-│   └── resources
-│       ├── ... # other documentation resources
-├── License.txt
-├── scripts
-│   └── ... # additional script for developers
+│   ├── requirements_engineering # engineering and requirement documentation
+├── flight_software # All source code
+│   ├── applications # All applications
+│   │   ├── flight_software_application # Actual flight software application
+│   │   └── software_in_the_loop # Software in the loop application
+│   ├── libs # All libraries
+│   │   ├── embedded_software # Only libraries for embedded software
+│   │   │   ├── serializer
+│   │   │   └── uart_imu_driver # UART IMU driver
+│   │   │       ├── include # Public header files
+│   │   │       ├── src # C++ files
+│   │   │       └── tests # Unit tests
+│   │   ├── ground_software # Only libraries for test and non embedded
+│   │   │   └── fake_imu
+│   │   └── os_abstraction_layer
+│   └── system_interfaces # All interfaces between applications and libraries
+│       ├── communication_protocols # Constants definitions for communication protocols
+│       ├── deployment_configuration # All configuration files for deployment definitions
+│       ├── display_messages # Only for testing and developement purpose
+│       └── messages # All messages exchanges between applications and libraries
+└── scripts # Shell scripts
+├── Makefile # Main Makefile that orchestrate the build process
+├── README.md # General project description
+├── CONTRIBUTING.md # How-tos for developer
 ```
 
 
 ## How-to
 ### Setup
 - Install dependencies:
-It is recomended to use the VSCode with the `.devcontainer`.
-If you want to defvelop natively on an Ubuntu 22 distribution, you can run
+It is recomended to use the VSCode with the `.devcontainer` and "Reopen in Container feature"
+If you want to develop natively on an Ubuntu 22 distribution, you can run
 ```bash
 ./.devcontainer/setup_build_environment_on_ubuntu_22.sh
 ./.devcontainer/setup_documentation_environment_on_ubuntu_22.sh
@@ -57,6 +50,12 @@ If you want to defvelop natively on an Ubuntu 22 distribution, you can run
 
 ```bash
 make clean
+```
+
+- Build all artifacts
+
+```bash
+make all
 ```
 
 - Format all files of the repository using relevant `pre-commit` hook

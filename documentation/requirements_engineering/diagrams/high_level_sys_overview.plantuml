@@ -13,6 +13,13 @@ end box
 entity IMU
 
 group Queuing a measurement
+    activate IMUDriver #LightGreen
+
+    loop frequent poll
+    IMUDriver -> Kernel: poll for bytes available
+    Kernel -> IMUDriver: No bytes available
+    end
+
     rnote over IMU
         t_mes1
     endrnote
@@ -20,14 +27,23 @@ group Queuing a measurement
     loop 8 times
         IMU -> UART: Send bits of start byte.
     end
+    IMU -> UART: Sent stop bit
     Kernel -> Kernel: Bits to byte assembly
     Kernel -> DeviceFile: Write start byte
-    DeviceFile -> IMUDriver: Receive start byte
+
+    deactivate IMUDriver
+    IMUDriver -> Kernel: poll for bytes available
+    Kernel -> IMUDriver: 1 byte available
+
+    DeviceFile -> IMUDriver: Read start byte
     IMUDriver -> Kernel: Poll clock time
+
     rnote over IMUDriver
         Timestamp retrieved
     endrnote
+
     IMU -> UART: Send first bit of message
+    activate IMUDriver #LightBlue
     UART -> Kernel: Receive first bit
     loop 14 times
         loop 8 times
@@ -39,8 +55,11 @@ group Queuing a measurement
             endrnote
         end
         Kernel -> DeviceFile: Write byte
-        DeviceFile -> IMUDriver: Receive byte
     end
+    deactivate IMUDriver
+
+    activate IMUDriver #LightGreen
+    DeviceFile -> IMUDriver: Read all bytes
 
     IMUDriver ->IMUDriver: Reconstruct IMU message from bytes
     IMUDriver -> IMUMessageQueue: Lock the  memory resource
@@ -48,8 +67,9 @@ group Queuing a measurement
     IMUDriver -> IMUMessageQueue: Enqueue message to queue
     IMUDriver -> IMUMessageQueue: Release the memory resource
     deactivate IMUMessageQueue
-end
 
+    deactivate IMUDriver
+end
 loop Process "Queuing a measurement" repeated x times
     rnote over IMU
         t_mes2

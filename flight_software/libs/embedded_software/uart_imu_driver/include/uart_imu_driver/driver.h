@@ -30,7 +30,12 @@ void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
  */
 class Driver {
  public:
-  explicit Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrction_layer,
+  /*! \brief Constructor
+   * \param os_abastraction_layer Operating system abstraction layer
+   * \param driver_context Driver shared memory context
+   * \param device_file_path Path to the device file
+   */
+  explicit Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastraction_layer,
                   DriverContext& driver_context,
                   const std::string device_file_path);
 

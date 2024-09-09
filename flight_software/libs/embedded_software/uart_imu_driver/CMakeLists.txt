@@ -11,7 +11,3 @@ CREATE_LIBRARY (
   messages)
 
 ADD_SUBDIRECTORY (tests)
-
-IF (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  ADD_SUBDIRECTORY (benchmark)
-ENDIF ()

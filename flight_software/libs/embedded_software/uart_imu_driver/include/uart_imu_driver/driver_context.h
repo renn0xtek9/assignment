@@ -15,18 +15,27 @@ struct DriverContext {
   std::queue<messages::ImuData> imu_data_queue{}; /**< Message queue to where data are pushed. */
   std::mutex queue_mutex{};                       /**< Mutex for locking access to message queue. */
   messages::ImuDriverStatus imu_driver_status{messages::ImuDriverStatus::NO_DATA}; /**< Driver status. */
-  std::mutex status_mutex{}; /** Mutex for locking access to driver status. */
+  std::mutex status_mutex{}; /**< Mutex for locking access to driver status. */
 
+  /*! \brief Push data in the queue
+   * \param data data to push in the queue
+   */
   void PushData(const messages::ImuData& data) {
     std::lock_guard<std::mutex> lock(queue_mutex);
     imu_data_queue.push(data);
   }
 
+  /*! \brief Set the driver status
+   * \param status new status to set
+   */
   void SetStatus(messages::ImuDriverStatus status) {
     std::lock_guard<std::mutex> lock(status_mutex);
     imu_driver_status = status;
   }
 
+  /*! \brief Get the driver status
+   * \return the driver status
+   */
   messages::ImuDriverStatus GetStatus() {
     std::lock_guard<std::mutex> lock(status_mutex);
     return imu_driver_status;
