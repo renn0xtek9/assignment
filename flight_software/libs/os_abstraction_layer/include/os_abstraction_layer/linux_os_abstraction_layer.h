@@ -10,6 +10,7 @@
 #include <string>
 namespace OsAbstractionLayer {
 
+/*! \brief Abstraction Layer for Linux Operating System.*/
 class LinuxOsAbstractionLayer : public OsAbstractionLayerInterface {
  public:
   /*! \fn std::chrono::nanoseconds TimeStampNow

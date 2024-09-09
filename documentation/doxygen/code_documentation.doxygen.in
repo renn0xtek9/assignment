@@ -6,7 +6,7 @@ PROJECT_NAME = IMU UART Driver
 PROJECT_LOGO = @CMAKE_SOURCE_DIR@/documentation/resources/project_logo.png
 
 # Set the project version
-PROJECT_VERSION = @PROJECT_VERSION@
+PROJECT_NUMBER = @PROJECT_VERSION@
 
 # Set the output directory for the generated documentation
 OUTPUT_DIRECTORY = @CMAKE_CURRENT_BINARY_DIR@/code_documentation/
@@ -25,16 +25,8 @@ GENERATE_HTML = YES
 # Set the HTML output directory
 HTML_OUTPUT = html
 
-# Enable the generation of a compound index
-GENERATE_HTML_HELP = YES
-
-# Enable the generation of a search index
-GENERATE_SEARCHHELP = YES
-
 GENERATE_TESTLIST = YES
 GENERATE_BUGLIST = YES
 GENERATE_DEPRECATEDLIST = YES
 
-
-
-GENERATE_LATEX = YES
+GENERATE_LATEX = FALSE

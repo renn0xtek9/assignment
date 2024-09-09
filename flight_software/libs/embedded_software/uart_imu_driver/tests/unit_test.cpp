@@ -1,5 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
-
+/*! \file unit_test.cpp
+ *\brief unit tests of the UartImuDriver.
+ */
 #include <communication_protocols/uart_imu.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -21,7 +23,7 @@ using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::Return;
 
-constexpr int FILE_DESCRIPTOR{42};
+constexpr int FILE_DESCRIPTOR{42}; /**< File descriptor for the device file.*/
 
 /*! \test UartImuDriver: shall not throw when initialized.*/
 TEST_F(UartImuDriverTest, UartImuDriverInitialization) {
@@ -133,7 +135,7 @@ void ExpectMesssagesAreEqual(const messages::ImuData& expected_imu_data, const m
   EXPECT_EQ(expected_imu_data.timestamp, imu_data.timestamp) << "IMU data timestamp should be the same";
 }
 
-/*! \test UartImuDriver: intake bytes comming from device file. */
+/*! \test UartImuDriver: intake bytes comming from device file.*/
 TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
   const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
   messages::ImuData expected_imu_data = CreateExpectedImuData(expected_timestamp);
@@ -160,12 +162,15 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
   ExpectMesssagesAreEqual(expected_imu_data, imu_driver_context_.imu_data_queue.front());
 }
 
+/*! \test UartImuDriver: shall not create empty messages.*/
 TEST(PushMesagesInQueue, EmptyStream) {
   uart_imu::DriverContext context{};
   std::vector<std::byte> bytes_stream_from_imu{};
   uart_imu::PushMesagesInQueue(bytes_stream_from_imu, context, std::chrono::nanoseconds{0});
   EXPECT_TRUE(context.imu_data_queue.empty()) << "Queue should be empty when stream is empty";
 }
+
+/*! \test UartImuDriver: shall not convert partial buffer into messages.*/
 TEST(PushMesagesInQueue, PartialMessage) {
   uart_imu::DriverContext context{};
   std::vector<std::byte> bytes_stream_from_imu{uart_imu::START_BYTE, std::byte{0x0d}, std::byte{0x0c}, std::byte{0x0b}};
@@ -173,6 +178,7 @@ TEST(PushMesagesInQueue, PartialMessage) {
   EXPECT_TRUE(context.imu_data_queue.empty()) << "Queue should be empty when stream is empty";
 }
 
+/*! \test UartImuDriver: shall create messages from the read bytes stream.*/
 TEST(PushMesagesInQueue, FullMessageInStream) {
   const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
   const auto expected_imu_data = CreateExpectedImuData(expected_timestamp);
@@ -186,6 +192,7 @@ TEST(PushMesagesInQueue, FullMessageInStream) {
   ExpectMesssagesAreEqual(expected_imu_data, context.imu_data_queue.front());
 }
 
+/*! \test UartImuDriver: shall create multiple messages if multiple content in the read bytes stream.*/
 TEST(PushMesagesInQueue, TwoMessageInStream) {
   const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
   const auto expected_imu_data = CreateExpectedImuData(expected_timestamp);
