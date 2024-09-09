@@ -1,7 +1,7 @@
 # Doxyfile
 
 # Set the project name
-PROJECT_NAME = STM32 Hello World
+PROJECT_NAME = IMU UART Driver
 
 PROJECT_LOGO = @CMAKE_SOURCE_DIR@/documentation/resources/project_logo.png
 
