@@ -106,7 +106,7 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
 
   uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
   driver.Start();
-  std::this_thread::sleep_for(2 * uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
+  std::this_thread::sleep_for(2 * uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
   driver.Stop();
   std::lock_guard<std::mutex> lock(imu_driver_context_.queue_mutex);
 
