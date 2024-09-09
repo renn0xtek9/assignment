@@ -13,13 +13,6 @@ namespace OsAbstractionLayer {
 
 class OsAbstractionLayerInterface {
  public:
-  /*! \fn void CheckDeviceFileExists
-   * \brief This checks whether the device file has been created by the Linux kernel
-   * \param device_file_path the path device file to check
-   * \return true if the device file exists, false otherwise
-   */
-  virtual bool CheckDeviceFileExists(const std::string& device_file_path) const = 0;
-
   /*! \fn std::chrono::nanoseconds TimeStampNow
    * \brief Get the current time in nanoseconds
    * \return current time in nanoseconds
@@ -61,11 +54,6 @@ class OsAbstractionLayerInterface {
    * \param ptr pointer where to write
    * \param size */
   virtual void ReadFromFile(const int& file_descriptor, char* ptr, const std::size_t& size) const = 0;
-
-  /*! \fn void TruncateFile
-   * \param  file_descriptor file descriptor integer
-   */
-  virtual void TruncateFile(const int& file_descriptor) const = 0;
 };
 
 }  // namespace OsAbstractionLayer
