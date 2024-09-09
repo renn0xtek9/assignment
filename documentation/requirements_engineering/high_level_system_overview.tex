@@ -150,7 +150,30 @@ enum class ImuDriverStatus { OK, BUSY, NO_DATA };
 
 
 \subsubsection{Data frames}
-The IMU transmit 1 start bytes and then 7 values of 2 byte eachs.
-Transmission of each frame (bytes) takes 10 bits (accounting for start and stop bits).
-With the output data rate of 208 Hz, the minimum baud rate requirement is 31200 bit/s.
-We choose a typical baudrate of 38400 bit/s
+Every bytes is transmitted in a UART frame of 10 bits (1 start bit, 8 data bits, 1 stop bit).
+\newline
+\newline
+\begin{bytefield}[bitwidth=4.1em]{10}
+    \bitheader[endianness=little]{9,8,1,0}\\
+    \bitbox{1}{Start bit}
+    \bitbox{8}{Data bits}
+    \bitbox{1}{Stop bit}
+\end{bytefield}
+
+The IMU transmit 1 start bytes and then 7 values of 2 byte eachs (14 data bytes in total).
+The complete message consist if 15 frames: 1 start frame (S) and 14 data frames (D1 to D7).
+\newline
+\newline
+\begin{bytefield}[bitwidth=2.1em]{15}
+    \bitheader[endianness=little]{14,1,0}\\
+    \bitbox{1}{S}
+    \bitbox{14}{D1 to D7}
+\end{bytefield}
+
+This amount to 150 bits per message.
+With an output data rate of 208 Hz, the required data rate is 31200 bit/s.
+We choose a typical baudrate of 38400 bit/s.
+This lead to a bit transmission duration of 26 $\mu$s.
+The complete message (150 bits) transmission duration is 3906 $\mu$s.
+With 208 Hz, the duration between the start of two messages is 4897 $\mu$s.
+This leads to an approximative 900 $\mu$s of idle time between two messages.
