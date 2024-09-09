@@ -56,7 +56,7 @@ void DisplayImuInformation(std::queue<messages::ImuData>& imu_message, messages:
 int main(int, char**) {
   std::signal(SIGINT, signalHandler);
   std::cout << "Flight software version: " << getVersion() << std::endl;
-  OsAbstractionLayer::OsAbstractionLayer os_abstraction_layer{};
+  OsAbstractionLayer::LinuxOsAbstractionLayer os_abstraction_layer{};
   uart_imu::DriverContext imu_driver_context{};
 
   uart_imu::Driver imu_driver{os_abstraction_layer, imu_driver_context, {kUartImuDeviceFilePath}};

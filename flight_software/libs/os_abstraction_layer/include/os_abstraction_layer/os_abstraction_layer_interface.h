@@ -11,6 +11,11 @@
 
 namespace OsAbstractionLayer {
 
+/*!
+ * \brief Interface for the OS Abstraction Layer
+ * The main purpose of this class is to provide objects with abstract interface to the OS. This is usefull for mocking
+ * and testing purposes.
+ */
 class OsAbstractionLayerInterface {
  public:
   /*! \fn std::chrono::nanoseconds TimeStampNow

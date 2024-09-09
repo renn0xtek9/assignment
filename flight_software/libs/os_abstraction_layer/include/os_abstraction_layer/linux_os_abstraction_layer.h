@@ -10,7 +10,7 @@
 #include <string>
 namespace OsAbstractionLayer {
 
-class OsAbstractionLayer : public OsAbstractionLayerInterface {
+class LinuxOsAbstractionLayer : public OsAbstractionLayerInterface {
  public:
   /*! \fn std::chrono::nanoseconds TimeStampNow
    * \brief Get the current time in nanoseconds
