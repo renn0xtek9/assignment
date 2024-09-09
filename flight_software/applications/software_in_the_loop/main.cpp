@@ -1,4 +1,5 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file This application mimic a "software in the loop" i.e. it sends fake IMU data over a virtual serial device.*/
 #include <fake_imu/fake_imu.h>
 #include <os_abstraction_layer/linux_os_abstraction_layer.h>
 #include <software_in_the_loop/software_in_the_loop_configuration.h>

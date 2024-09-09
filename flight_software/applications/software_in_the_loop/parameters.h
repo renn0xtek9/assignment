@@ -6,7 +6,9 @@
 #include <string>
 #include <version.hpp>
 
+/*! \brief Run parameters for the software in the loop application*/
 struct SoftwareInTheLoopRunParameters {
+  /*! \brief run duration in miliseconds*/
   std::chrono::milliseconds duration_ms{1000};
 };
 

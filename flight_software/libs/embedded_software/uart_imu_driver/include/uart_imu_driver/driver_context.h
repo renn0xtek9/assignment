@@ -7,11 +7,15 @@
 #include <mutex>
 #include <queue>
 namespace uart_imu {
+
+/*! \brief Shared memory context for the dirver
+ * \note in an actual embedded software, this shall need to be implemented. Instead, the middleware will provide some
+ * publisher/subscriber mechanism. */
 struct DriverContext {
-  std::queue<messages::ImuData> imu_data_queue{};
-  std::mutex queue_mutex{};
-  messages::ImuDriverStatus imu_driver_status{messages::ImuDriverStatus::NO_DATA};
-  std::mutex status_mutex{};
+  std::queue<messages::ImuData> imu_data_queue{}; /**< Message queue to where data are pushed. */
+  std::mutex queue_mutex{};                       /**< Mutex for locking access to message queue. */
+  messages::ImuDriverStatus imu_driver_status{messages::ImuDriverStatus::NO_DATA}; /**< Driver status. */
+  std::mutex status_mutex{}; /** Mutex for locking access to driver status. */
 
   void PushData(const messages::ImuData& data) {
     std::lock_guard<std::mutex> lock(queue_mutex);

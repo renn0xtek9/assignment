@@ -15,7 +15,7 @@
  */
 class FakeImu {
  public:
-  /*! \ brief Instatiate fake IMU device
+  /*! \brief Instatiate fake IMU device
    *\param os_abstraction_layer reference to an operating system abstraction layer.
    */
   explicit FakeImu(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abstraction_layer);
@@ -36,9 +36,9 @@ class FakeImu {
    */
   void SendImuData(const messages::ImuData& data);
 
-  int file_descriptor_{-1};
+  int file_descriptor_{-1}; /**< File descriptor handle */
 
-  const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_;
+  const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_; /**< Operating System abstraction layer */
 };
 
 #endif  // FAKE_IMU_FAKE_IMU_H

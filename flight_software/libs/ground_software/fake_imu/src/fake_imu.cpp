@@ -14,10 +14,6 @@
 #include <iostream>
 #include <thread>
 
-FakeImu::FakeImu(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abstraction_layer)
-    : os_layer_{os_abstraction_layer} {
-}
-
 messages::ImuData GenerateFakeImuData() {
   messages::ImuData data{};
   data.a_x = 0.1F;
@@ -29,6 +25,10 @@ messages::ImuData GenerateFakeImuData() {
   data.temperature = 25.6F;
   data.timestamp = std::chrono::nanoseconds{std::chrono::system_clock::now().time_since_epoch()};
   return data;
+}
+
+FakeImu::FakeImu(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abstraction_layer)
+    : os_layer_{os_abstraction_layer} {
 }
 
 void FakeImu::SimulateNormalOperation(const std::string& device_file_path,

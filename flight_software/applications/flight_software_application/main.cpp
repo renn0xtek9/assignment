@@ -1,4 +1,6 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file This applications mimic an flightsoftware application that would instantiate the IMU UART driver, read
+ * messages from it and display it in the sdtout*/
 #include <display_messages/imu_information.h>
 #include <flight_software_deployment_linux/flight_software_linux_configuration.h>
 #include <os_abstraction_layer/linux_os_abstraction_layer.h>

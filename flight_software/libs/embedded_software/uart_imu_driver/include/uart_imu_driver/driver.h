@@ -17,26 +17,42 @@
 #include <vector>
 namespace uart_imu {
 
+/*! \brief Driver class for the IMU
+ */
 class Driver {
  public:
   explicit Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrction_layer,
                   DriverContext& driver_context,
                   const std::string device_file_path);
 
+  /*! \brief Start the driver
+   * This will open the device file and start the driver thread if succesfull.
+   */
   void Start();
+
+  /*! \brief Stop the driver
+   */
   void Stop();
 
  private:
+  /*! \brief Empty the device file by reading all its content and dismissing data.*/
   void FlushTheDeviceFile() const;
+  /*! \brief Read bytes from the device file
+   * This will read  all bytes available in the device file at once.
+   * \return a vector of bytes read from the device file
+   */
   std::vector<std::byte> ReadBytesFromDevice() const;
 
-  const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_;
-  DriverContext& driver_context_;
-  const std::string device_file_path_;
-  int file_descriptor_{-1};
+  /*! \brief Run function
+  Started in separated thread form start.*/
   void Run();
-  std::thread driver_thread_;
-  std::atomic<bool> driver_must_stop_{false};
+
+  const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_; /**< Operating system abstraction layer */
+  DriverContext& driver_context_;                                   /**< Driver shared memory context. */
+  const std::string device_file_path_;                              /**< Path to the device file */
+  int file_descriptor_{-1};                                         /**< File descriptor handle */
+  std::thread driver_thread_;                                       /**< Driver run thread object. */
+  std::atomic<bool> driver_must_stop_{false};                       /**< Atomic flag to stop the driver thread. */
 };
 }  // namespace uart_imu
 #endif  // UART_IMU_DRIVER_DRIVER_H

@@ -28,6 +28,11 @@ class MockOsAbstractionLayer : public OsAbstractionLayerInterface {
 
 class MockReadingFile : public OsAbstractionLayerInterface {
  public:
+  /*! \brief Define that data that the mock will return via the OS abstraction layer.*/
+  void SetBytesToReturn(const std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES>& bytes) {
+    bytes_to_return_ = bytes;
+  }
+
   MockReadingFile() {
     ON_CALL(*this, ReadFromFile).WillByDefault([this](const int&, char* ptr, const std::size_t& size) {
       EXPECT_TRUE(index_of_first_byte_ + size < bytes_to_return_.size() + 1U)
@@ -52,10 +57,6 @@ class MockReadingFile : public OsAbstractionLayerInterface {
   MOCK_METHOD(int, ByteAvailableToRead, (const int& file_descriptor), (const, override));
   MOCK_METHOD(std::chrono::nanoseconds, TimeStampNow, (), (const, override));
   MOCK_METHOD(void, ReadFromFile, (const int& file_descriptor, char* ptr, const std::size_t& size), (const, override));
-
-  void SetBytesToReturn(const std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES>& bytes) {
-    bytes_to_return_ = bytes;
-  }
 
  private:
   std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES> bytes_to_return_{};

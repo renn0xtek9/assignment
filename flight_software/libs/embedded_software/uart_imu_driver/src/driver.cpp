@@ -8,10 +8,12 @@
 #include <thread>
 namespace uart_imu {
 
+/*! \brief Check if the byte stream contains at least one message.*/
 bool IsThereAtLeastOneMessage(const std::vector<std::byte>& bytes_stream_from_imu) {
   return bytes_stream_from_imu.size() >= uart_imu::TOTAL_NUMBER_OF_BYTES;
 }
 
+/*! \brief Push new messages in queue.*/
 void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
                         DriverContext& driver_context,
                         const std::chrono::nanoseconds& timestamp) {
@@ -26,7 +28,8 @@ void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
                               bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES);
 }
 
-bool StartByteFound(const std::vector<std::byte> bytes_stream_from_imu) {
+/*! \brief Check if start byte is found at start of bytes stream.*/
+bool IsStartingWithStartByte(const std::vector<std::byte> bytes_stream_from_imu) {
   if (bytes_stream_from_imu.empty()) {
     return false;
   }
@@ -84,7 +87,7 @@ void Driver::Run() {
   std::vector<std::byte> bytes_stream_from_imu{};
 
   while (!driver_must_stop_) {
-    while (!StartByteFound(bytes_stream_from_imu)) {
+    while (!IsStartingWithStartByte(bytes_stream_from_imu)) {
       bytes_stream_from_imu = ReadBytesFromDevice();
       CleanStreamUpToStartByte(bytes_stream_from_imu);
       if (driver_must_stop_) {
@@ -103,7 +106,7 @@ void Driver::Run() {
     if (IsThereAtLeastOneMessage(bytes_stream_from_imu)) {
       PushMesagesInQueue(bytes_stream_from_imu, driver_context_, timestamp);
     }
-    // Message has been received and pushe. Now sleep until the start of next message.
+    // Message has been received and pushed. Now sleep until the start of next message.
     std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
   }
 }
