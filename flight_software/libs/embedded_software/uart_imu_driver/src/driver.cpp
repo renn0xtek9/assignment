@@ -17,15 +17,20 @@ bool IsThereAtLeastOneMessage(const std::vector<std::byte>& bytes_stream_from_im
 void PushMesagesInQueue(std::vector<std::byte>& bytes_stream_from_imu,
                         DriverContext& driver_context,
                         const std::chrono::nanoseconds& timestamp) {
-  std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> message_byte_array{};
-  std::copy(bytes_stream_from_imu.begin() + uart_imu::NUMBER_START_BYTE,
-            bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES, message_byte_array.begin());
+  while (!bytes_stream_from_imu.empty()) {
+    if (bytes_stream_from_imu.size() < uart_imu::TOTAL_NUMBER_OF_BYTES) {
+      return;
+    }
+    std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION> message_byte_array{};
+    std::copy(bytes_stream_from_imu.begin() + uart_imu::NUMBER_START_BYTE,
+              bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES, message_byte_array.begin());
 
-  auto imu_message = serializer::uart::Deserialize(message_byte_array);
-  imu_message.timestamp = timestamp;
-  driver_context.PushData(imu_message);
-  bytes_stream_from_imu.erase(bytes_stream_from_imu.begin(),
-                              bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES);
+    auto imu_message = serializer::uart::Deserialize(message_byte_array);
+    imu_message.timestamp = timestamp;
+    driver_context.PushData(imu_message);
+    bytes_stream_from_imu.erase(bytes_stream_from_imu.begin(),
+                                bytes_stream_from_imu.begin() + uart_imu::TOTAL_NUMBER_OF_BYTES);
+  }
 }
 
 /*! \brief Check if start byte is found at start of bytes stream.*/

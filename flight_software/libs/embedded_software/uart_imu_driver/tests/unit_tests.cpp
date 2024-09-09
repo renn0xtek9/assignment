@@ -76,6 +76,7 @@ TEST_F(UartImuDriverTest, UartImuPollForByteavailableAtStart) {
   driver.Stop();
 }
 
+/*! \brief Assemble a complete frame based on given imu message data.*/
 std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES> AssembleFrame(
     const std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_UART_COMMUNICATION>& imu_data) {
   std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES> frame{};
@@ -84,9 +85,10 @@ std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES> AssembleFrame(
   return frame;
 }
 
-/*! \test UartImuDriver: intake bytes comming from device file. */
-TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
-  const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
+/*! \brief Create some expected ImuData
+ * \param expected_timestamp The expected timestamp for the ImuData
+ */
+messages::ImuData CreateExpectedImuData(const std::chrono::nanoseconds& expected_timestamp) {
   messages::ImuData expected_imu_data{};
   expected_imu_data.a_x = 0.1F;
   expected_imu_data.a_y = 0.2F;
@@ -96,27 +98,14 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
   expected_imu_data.omega_z = 0.6F;
   expected_imu_data.temperature = 25.4F;
   expected_imu_data.timestamp = expected_timestamp;
+  return expected_imu_data;
+}
 
-  EXPECT_CALL(os_abstraction_layer_, OpenDeviceFile("some_device_file")).WillOnce(Return(FILE_DESCRIPTOR));
-  EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(FILE_DESCRIPTOR))
-      .WillOnce(Return(0))
-      .WillOnce(Return(0))
-      .WillRepeatedly(Return(static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)));
-  EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1)).WillRepeatedly(Return(expected_timestamp));
-  EXPECT_CALL(os_abstraction_layer_,
-              ReadFromFile(FILE_DESCRIPTOR, _, static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)))
-      .Times(AtLeast(1));
-
-  os_abstraction_layer_.SetBytesToReturn(AssembleFrame(serializer::uart::Serialize(expected_imu_data)));
-
-  uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
-  driver.Start();
-  std::this_thread::sleep_for(2 * uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
-  driver.Stop();
-  std::lock_guard<std::mutex> lock(imu_driver_context_.queue_mutex);
-
-  EXPECT_TRUE(!imu_driver_context_.imu_data_queue.empty()) << "IMU data should be in the queue";
-  const auto imu_data = imu_driver_context_.imu_data_queue.front();
+/*! \brief Check if two ImuData messages are equal
+ * \param expected_imu_data The expected ImuData message
+ * \param imu_data The ImuData message to check
+ */
+void ExpectMesssagesAreEqual(const messages::ImuData& expected_imu_data, const messages::ImuData& imu_data) {
   EXPECT_NEAR(expected_imu_data.a_x, imu_data.a_x, uart_imu::LSB_SENSITIVITY_ACCELERATION)
       << "IMU data a_x should not differ more then the LSB sensitivity" << expected_imu_data.a_x
       << " vs: " << imu_data.a_x << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_ACCELERATION;
@@ -142,4 +131,74 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
       << " vs: " << imu_data.temperature << " LSB sens.: " << uart_imu::LSB_SENSITIVITY_TEMPERATURE;
 
   EXPECT_EQ(expected_imu_data.timestamp, imu_data.timestamp) << "IMU data timestamp should be the same";
+}
+
+/*! \test UartImuDriver: intake bytes comming from device file. */
+TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
+  const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
+  messages::ImuData expected_imu_data = CreateExpectedImuData(expected_timestamp);
+
+  EXPECT_CALL(os_abstraction_layer_, OpenDeviceFile("some_device_file")).WillOnce(Return(FILE_DESCRIPTOR));
+  EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(FILE_DESCRIPTOR))
+      .WillOnce(Return(0))
+      .WillOnce(Return(0))
+      .WillRepeatedly(Return(static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)));
+  EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1)).WillRepeatedly(Return(expected_timestamp));
+  EXPECT_CALL(os_abstraction_layer_,
+              ReadFromFile(FILE_DESCRIPTOR, _, static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)))
+      .Times(AtLeast(1));
+
+  os_abstraction_layer_.SetBytesToReturn(AssembleFrame(serializer::uart::Serialize(expected_imu_data)));
+
+  uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
+  driver.Start();
+  std::this_thread::sleep_for(2 * uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
+  driver.Stop();
+  std::lock_guard<std::mutex> lock(imu_driver_context_.queue_mutex);
+
+  EXPECT_TRUE(!imu_driver_context_.imu_data_queue.empty()) << "IMU data should be in the queue";
+  ExpectMesssagesAreEqual(expected_imu_data, imu_driver_context_.imu_data_queue.front());
+}
+
+TEST(PushMesagesInQueue, EmptyStream) {
+  uart_imu::DriverContext context{};
+  std::vector<std::byte> bytes_stream_from_imu{};
+  uart_imu::PushMesagesInQueue(bytes_stream_from_imu, context, std::chrono::nanoseconds{0});
+  EXPECT_TRUE(context.imu_data_queue.empty()) << "Queue should be empty when stream is empty";
+}
+TEST(PushMesagesInQueue, PartialMessage) {
+  uart_imu::DriverContext context{};
+  std::vector<std::byte> bytes_stream_from_imu{uart_imu::START_BYTE, std::byte{0x0d}, std::byte{0x0c}, std::byte{0x0b}};
+  uart_imu::PushMesagesInQueue(bytes_stream_from_imu, context, std::chrono::nanoseconds{0});
+  EXPECT_TRUE(context.imu_data_queue.empty()) << "Queue should be empty when stream is empty";
+}
+
+TEST(PushMesagesInQueue, FullMessageInStream) {
+  const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
+  const auto expected_imu_data = CreateExpectedImuData(expected_timestamp);
+  const auto full_frame = AssembleFrame(serializer::uart::Serialize(expected_imu_data));
+  std::vector<std::byte> bytes_stream_from_imu{std::begin(full_frame), std::end(full_frame)};
+
+  uart_imu::DriverContext context{};
+  uart_imu::PushMesagesInQueue(bytes_stream_from_imu, context, expected_timestamp);
+
+  EXPECT_EQ(1U, context.imu_data_queue.size()) << "Queue should have one element";
+  ExpectMesssagesAreEqual(expected_imu_data, context.imu_data_queue.front());
+}
+
+TEST(PushMesagesInQueue, TwoMessageInStream) {
+  const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
+  const auto expected_imu_data = CreateExpectedImuData(expected_timestamp);
+  const auto full_frame = AssembleFrame(serializer::uart::Serialize(expected_imu_data));
+  std::vector<std::byte> bytes_stream_from_imu{std::begin(full_frame), std::end(full_frame)};
+  bytes_stream_from_imu.insert(std::end(bytes_stream_from_imu), std::begin(full_frame), std::end(full_frame));
+
+  ASSERT_EQ(2 * uart_imu::TOTAL_NUMBER_OF_BYTES, bytes_stream_from_imu.size()) << "Stream should have two full frames";
+
+  uart_imu::DriverContext context{};
+  uart_imu::PushMesagesInQueue(bytes_stream_from_imu, context, expected_timestamp);
+
+  EXPECT_EQ(2U, context.imu_data_queue.size()) << "Queue should have two element";
+  ExpectMesssagesAreEqual(expected_imu_data, context.imu_data_queue.front());
+  ExpectMesssagesAreEqual(expected_imu_data, context.imu_data_queue.back());
 }
