@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file imu_data.h
+ *\brief ImuData message definition
+ */
 #ifndef MESSAGES_IMU_DATA_H
 #define MESSAGES_IMU_DATA_H
 #include <chrono>

@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file os_abstraction_layer_interface.h
+ *\brief OS Abstraction Layer Interface header.
+ */
 #ifndef OS_ABSTRACTION_LAYER_OS_ABSTRACTION_LAYER_INTERFACE_H
 #define OS_ABSTRACTION_LAYER_OS_ABSTRACTION_LAYER_INTERFACE_H
 #include <fcntl.h>

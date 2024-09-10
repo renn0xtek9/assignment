@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file driver.h
+ *\brief UART IMU Driver header.
+ */
 #ifndef UART_IMU_DRIVER_DRIVER_H
 #define UART_IMU_DRIVER_DRIVER_H
 #include <communication_protocols/uart_imu.h>

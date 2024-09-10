@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file imu_driver_status.h
+ *\brief ImuDriverStatus message definition
+ */
 #ifndef MESSAGES_IMU_DRIVER_STATUS_H
 #define MESSAGES_IMU_DRIVER_STATUS_H
 

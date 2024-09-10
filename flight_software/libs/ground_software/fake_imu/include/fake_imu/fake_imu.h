@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file fake_imu.h
+ *\brief FakeIMU header.
+ */
 #ifndef FAKE_IMU_FAKE_IMU_H
 #define FAKE_IMU_FAKE_IMU_H
 #include <messages/imu_data.h>

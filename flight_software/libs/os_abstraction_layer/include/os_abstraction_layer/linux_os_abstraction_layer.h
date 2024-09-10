@@ -1,6 +1,9 @@
 // Copyright 2024 <Maxime Haselbauer>
 #ifndef OS_ABSTRACTION_LAYER_OS_ABSTRACTION_LAYER_H
 #define OS_ABSTRACTION_LAYER_OS_ABSTRACTION_LAYER_H
+/*! \file linux_os_abstraction_layer.h
+ *\brief Linux OS Abtraction Layer header.
+ */
 #include <fcntl.h>
 #include <os_abstraction_layer/os_abstraction_layer_interface.h>
 #include <unistd.h>
