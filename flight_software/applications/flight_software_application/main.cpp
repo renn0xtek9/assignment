@@ -57,9 +57,12 @@ void RetrieveMessage(uart_imu::DriverContext& driver_context,
  * \param imu_driver_status driver status
  */
 void DisplayImuInformation(std::queue<messages::ImuData>& imu_message, messages::ImuDriverStatus& imu_driver_status) {
-  std::cout << std::endl << "Driver status: " << imu_driver_status << std::endl;
+  static messages::ImuDriverStatus previous_status{messages::ImuDriverStatus::NO_DATA};
+  if (!(previous_status == imu_driver_status)) {
+    std::cout << std::endl << "Driver status: " << imu_driver_status << std::endl;
+    previous_status = imu_driver_status;
+  }
   if (imu_message.empty()) {
-    std::cout << "No new IMU data available" << std::endl;
     return;
   } else {
     // Display the last one.
