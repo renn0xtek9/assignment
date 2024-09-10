@@ -29,3 +29,31 @@
 % system requirements
 \newcommand{\sysreq}[2]{\label{req-#1}\textbf{Sys-Req: #1} #2\newline\newline}
 \newcommand{\linkreq}[1]{Req. \hyperref[req-#1]{#1}}
+
+\makeatletter
+\renewcommand{\maketitle}{
+    \begin{titlepage}
+        \newgeometry{left=2cm,right=2cm,top=2cm,bottom=2cm} % Set margins
+        \noindent % Remove paragraph indentation
+        \includegraphics[width=3cm]{./../resources/project_logo.png} % Insert logo on the left
+        \hfill % Move the following text to the right
+        \begin{minipage}[t]{0.6\textwidth} % Set width of the title text
+            \vspace{0pt} % Align the top of the text with the logo
+            \centering % Center the text horizontally
+            \Huge\textbf{\MakeUppercase{\@title}}
+            \\
+            \vspace{10pt} % Add some vertical space between title and author
+            \Large\textit{Deliverables description}\\ % Smaller, italic subtitle text
+            \vspace{30pt} % Add some vertical space between author and date
+            \vspace{10pt} % Add some vertical space between author and date
+        \end{minipage}
+        \vfill % Fill the vertical space between the title text and the bottom of the page
+        \noindent % Remove paragraph indentation
+
+        \centering{\textbf{\@author}}\\ % Large, bold author text
+        \rule{\linewidth}{0.4pt} % Add a horizontal line across the page
+        \vspace{5pt} % Add some vertical space between the line and the text below
+        \footnotesize{\@date}
+    \end{titlepage}
+}
+\makeatother
