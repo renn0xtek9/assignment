@@ -54,6 +54,7 @@ class Driver {
  private:
   /*! \brief Empty the device file by reading all its content and dismissing data.*/
   void FlushTheDeviceFile() const;
+
   /*! \brief Read bytes from the device file
    * This will read  all bytes available in the device file at once.
    * \return a vector of bytes read from the device file

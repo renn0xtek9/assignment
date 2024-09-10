@@ -85,10 +85,10 @@ std::vector<std::byte> Driver::ReadBytesFromDevice() const {
 }
 
 void Driver::UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus new_status) {
-  // if (new_status != internal_driver_status_) {
-  driver_context_.SetStatus(new_status);
-  internal_driver_status_ = new_status;
-  // }
+  if (new_status != internal_driver_status_) {
+    driver_context_.SetStatus(new_status);
+    internal_driver_status_ = new_status;
+  }
 }
 
 void Driver::PollAtAHigherFrequencyUntilStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
