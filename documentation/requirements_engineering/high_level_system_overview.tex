@@ -1,40 +1,12 @@
 \section{High level system overview}
 This section is a superficial high level system design analysis. It addresses.
 \begin{itemize}
-    \item data structure and data flow
     \item sequential interaction between the system subcomponents
     \item superficial fault tree analysis
+    \item data structure and data flow
     \item software interface definitions
 \end{itemize}
 \textbf{The goal is to derive some of the most basic system requirements (see section: \ref{sec:system_requirements}).}
-
-\subsection{Data structure and data flow}
-We propose the following characteristics for the IMU. Those are inspired from \cite{lm6ds3}.
-This is a MEMS IMU that is neither a space grade nor UART capable, but provide good characeristics of a basic IMU.
-The IMU will provide the following data:
-\begin{itemize}
-    \item $a_x$ acceleration on the x-axis.
-    \item $a_y$ acceleration on the y-axis.
-    \item $a_z$ acceleration on the z -axis.
-    \item $\omega_x$ angular rate along its x-axis.
-    \item $\omega_y$ angular rate along its y-axis.
-    \item $\omega_z$ angular rate along its z-axis.
-    \item $T$ temperature of the sensor.
-\end{itemize}
-From this we derive requirements \linkreq{1}.
-We assume that the physical sampling of all those values are made at the exact same time, respectively the difference between the sampling time is negligible.
-In other word we can timestamp the measurement time with a single timestamp $t_{mes}$.
-According to the datasheets all values are represented by 16 bits values.
-The temperature sensor has a sensitivity with 256 LSB $^{\circ}C$.
-We assume the IMU would be configured with:
-\begin{itemize}
-    \item a range of $\pm 16g$ for the accelerometer. The sensitivity is $0.488~mg/LSB$
-    \item a range of $\pm 250^{\circ}/s$ for the gyroscope. The sensitivity is $8.75~mdps/LSB$
-    \item an output data rate of 208 Hz.
-\end{itemize}
-
-We can obtain the physical values from their 16 bits representation from using the following formula.
-From this we derive \linkreq{2}, \linkreq{3} and \linkreq{4}.
 
 \subsection{Sequential interaction}
 The system has following components:
@@ -64,7 +36,7 @@ As soon as one byte is available, the IMU driver will read it and check if it is
 The IMU driver will then retrieve the clock time and use it to timestamp the measurement (\linkreq{5}).\\
 Note that this approach has an intrinsic delay between the physical measurement and the timestamp.
 Low-level drivers would perform better in this regard. In a real application it would be anyway mandatory to derive the maximum allowable difference from the requirements of the client (OdometryApp).\\
-The IMU then idles for the duration of the transfer of the full message message. (See blue lifeline).
+The IMU then idles for the duration of the transfer of the full message. (See blue lifeline).
 The rest of the bytes are collected by the low-level driver.
 The end of the IMU driver idling duration shall coincide with the last byte of the message being written in the device file.
 The IMU driver then reads all the bytes and convert them to an IMU message (internal software representation).
@@ -96,7 +68,7 @@ We categorize events as green, where mitigations measures shall arguably happen 
 \hline
 IMU driver not deserializing data properly. & shall be addressed by rigorous unit testing of the implementation. \\
 \hline
-Message from IMU are incomplete. & shall be addressed by detecting the start of a message using a start byte \linkreq{TS1}. \\
+Message from IMU is incomplete. & shall be addressed by detecting the start of a message using a start byte \linkreq{TS1}. \\
 \hline
 The IMU baudrate is higher than expected & in this simple example, the mitigation consist in notifying the OdometryApp when it collects the IMU messages (\linkreq{TS2},\linkreq{TS3},\linkreq{TS4}). \\
 \hline
@@ -110,6 +82,33 @@ To mitigate this, we implement a polling mechanism that poll at higher frequency
 \end{tabular}
 \end{center}
 
+\subsection{Data structure and data flow}
+We propose the following characteristics for the IMU. Those are inspired from \cite{lm6ds3}.
+This is a MEMS IMU that is neither space grade nor UART capable, but provides good characeristics of a basic IMU.
+The IMU will provide the following data:
+\begin{itemize}
+    \item $a_x$ acceleration on the x-axis.
+    \item $a_y$ acceleration on the y-axis.
+    \item $a_z$ acceleration on the z -axis.
+    \item $\omega_x$ angular rate along its x-axis.
+    \item $\omega_y$ angular rate along its y-axis.
+    \item $\omega_z$ angular rate along its z-axis.
+    \item $T$ temperature of the sensor.
+\end{itemize}
+From this we derive requirement \linkreq{1}.
+We assume that the physical sampling of all those values are made at the exact same time, respectively the difference between the sampling time is negligible.
+In other word we can timestamp the measurement time with a single timestamp $t_{mes}$.
+According to the datasheets all values are represented by 16 bits values.
+The temperature sensor has a sensitivity with 256 LSB $^{\circ}C$.
+We assume the IMU would be configured with:
+\begin{itemize}
+    \item a range of $\pm 16g$ for the accelerometer. The sensitivity is $0.488~mg/LSB$
+    \item a range of $\pm 250^{\circ}/s$ for the gyroscope. The sensitivity is $8.75~mdps/LSB$
+    \item an output data rate of 208 Hz.
+\end{itemize}
+
+From this we derive \linkreq{2}, \linkreq{3} and \linkreq{4}.
+
 \subsubsection{Definition of data frames and protocol.}
 Every bytes is transmitted in a UART frame of 10 bits (1 start bit, 8 data bits, 1 stop bit).
 \newline
@@ -122,13 +121,13 @@ Every bytes is transmitted in a UART frame of 10 bits (1 start bit, 8 data bits,
 \end{bytefield}
 
 The IMU transmit 1 start bytes and then 7 values of 2 bytes each (14 data bytes in total).
-The complete message consist of 15 frames: 1 start frame (S) and 14 data frames (D1 to D7).
+The complete message consist of 15 frames: 1 start frame (S) and 14 data frames (D1 to D14).
 \newline
 \newline
 \begin{bytefield}[bitwidth=2.1em]{15}
     \bitheader[endianness=little]{14,1,0}\\
     \bitbox{1}{S}
-    \bitbox{14}{D1 to D7}
+    \bitbox{14}{D1 to D14}
 \end{bytefield}
 
 This amounts to 150 bits per message.
@@ -146,8 +145,7 @@ As mentionned earlier, this is a limit of a high-level polling approach.
 
 
 \subsection{Software interface definition}
-We define the following structure for IMU messages.\\
-To fullfill \linkreq{1}, \linkreq{8} and \linkreq{NF1},
+To fullfill \linkreq{1}, \linkreq{8} and \linkreq{NF1}, we define the following structure for IMU messages.
 \begin{lstlisting}[style=cppstyle]
 struct ImuData {
     float a_x{};
