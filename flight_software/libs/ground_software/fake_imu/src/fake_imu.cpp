@@ -4,7 +4,7 @@
 #include <display_messages/imu_information.h>
 #include <fake_imu/fake_imu.h>
 #include <messages/imu_data.h>
-#include <os_abstraction_layer/linux_os_abstraction_layer.h>
+#include <os_abstraction_layer/os_abstraction_layer_interface.h>
 #include <serializer/serializer.h>
 
 #include <array>

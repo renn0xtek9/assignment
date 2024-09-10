@@ -7,7 +7,7 @@
 #include <communication_protocols/uart_imu.h>
 #include <messages/imu_data.h>
 #include <messages/imu_driver_status.h>
-#include <os_abstraction_layer/linux_os_abstraction_layer.h>
+#include <os_abstraction_layer/os_abstraction_layer_interface.h>
 #include <uart_imu_driver/driver_context.h>
 
 #include <array>
