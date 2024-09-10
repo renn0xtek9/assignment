@@ -14,7 +14,11 @@ It contains two executables:
     \item \texttt{software\_in\_the\_loop}: an application that simulates a fake IMU device and writes data to a virtual serial device file.
 \end{itemize}
 To setup the virtual device file the user must first run \texttt{setup\_software\_in\_the\_loop.sh} also provided within the package.\\
-This shall setup the virtual serial device file \texttt{/tmp/vserial\_flight\_software\_side} and \texttt{/tmp/vserial\_sil\_side}. \newline
+This shall setup two virtual serial device files
+\begin{itemize}
+    \item \texttt{/tmp/vserial\_flight\_software\_side}
+    \item \texttt{/tmp/vserial\_sil\_side}
+\end{itemize}
 The user can then run \newline \texttt{flight\_software} \newline in a terminal and then \newline \texttt{software\_in\_the\_loop --duration\_ms 5000} \newline in another terminal. \\
 This sends some fake (constant) values to the virtual serial device file for 5 seconds.
 The IMU message data and driver status will be displayed on the \texttt{flight\_software} terminal. Values should be nearly equal with respect to the LSB sensitivity.
