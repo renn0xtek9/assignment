@@ -37,8 +37,10 @@ void FakeImu::SimulateNormalOperation(const std::string& device_file_path,
   const auto start_timestamp = std::chrono::high_resolution_clock::now();
   auto time_since_start = std::chrono::high_resolution_clock::now() - start_timestamp;
   while ((file_descriptor_ > 0) && ((std::chrono::high_resolution_clock::now() - start_timestamp) < duration_ms)) {
+    const auto start_of_next_message =
+        std::chrono::high_resolution_clock::now() + uart_imu::DURATION_BETWEEN_TWO_START_BYTES;
     SendImuData(GenerateFakeImuData());
-    std::this_thread::sleep_for(uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
+    std::this_thread::sleep_until(start_of_next_message);
   }
   if (file_descriptor_ > 0) {
     os_layer_.CloseDeviceFile(file_descriptor_);

@@ -41,6 +41,11 @@ class MockReadingFile : public OsAbstractionLayerInterface {
     bytes_to_return_ = bytes;
   }
 
+  /*! \brief Define the time increment (between every call time TimeStamp)*/
+  void SetTimeIncrement(const std::chrono::nanoseconds& time_increment) {
+    time_increment_ = time_increment;
+  }
+
   MockReadingFile() {
     ON_CALL(*this, ReadFromFile).WillByDefault([this](const int&, char* ptr, const std::size_t& size) {
       EXPECT_TRUE(index_of_first_byte_ + size < bytes_to_return_.size() + 1U)
@@ -54,6 +59,11 @@ class MockReadingFile : public OsAbstractionLayerInterface {
       if (index_of_first_byte_ >= bytes_to_return_.size()) {
         index_of_first_byte_ = 0;
       }
+    });
+
+    ON_CALL(*this, TimeStampNow).WillByDefault([this]() {
+      current_time_ += time_increment_;
+      return current_time_;
     });
   }
   MOCK_METHOD(int, OpenDeviceFile, (const std::string& device_file_path), (const, override)); /**< Mock OpenDeviceFile*/
@@ -75,6 +85,8 @@ class MockReadingFile : public OsAbstractionLayerInterface {
  private:
   std::array<std::byte, uart_imu::TOTAL_NUMBER_OF_BYTES> bytes_to_return_{};
   std::size_t index_of_first_byte_{};
+  std::chrono::nanoseconds current_time_{};
+  std::chrono::nanoseconds time_increment_{};
 };
 
 }  // namespace OsAbstractionLayer

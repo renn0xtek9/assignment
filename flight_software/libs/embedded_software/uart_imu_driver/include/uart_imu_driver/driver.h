@@ -57,9 +57,20 @@ class Driver {
    */
   std::vector<std::byte> ReadBytesFromDevice() const;
 
+  /*! \brief Poll the device file at regular small interface to catch the start of a message\
+   * \param bytes_stream_from_imu vector of bytes from the IMU.
+   */
+  void PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu);
+
   /*! \brief Run function
   Started in separated thread form start.*/
   void Run();
+
+  /*! \brief This will change the internal representation of the driver status.
+   * if new_status is different from the current status, the context will be updated.
+   * \param new_status
+   */
+  void UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus new_status);
 
   const OsAbstractionLayer::OsAbstractionLayerInterface& os_layer_; /**< Operating system abstraction layer */
   DriverContext& driver_context_;                                   /**< Driver shared memory context. */
@@ -67,6 +78,7 @@ class Driver {
   int file_descriptor_{-1};                                         /**< File descriptor handle */
   std::thread driver_thread_;                                       /**< Driver run thread object. */
   std::atomic<bool> driver_must_stop_{false};                       /**< Atomic flag to stop the driver thread. */
+  messages::ImuDriverStatus internal_driver_status_{messages::ImuDriverStatus::NO_DATA}; /**< Driver status */
 };
 }  // namespace uart_imu
 #endif  // UART_IMU_DRIVER_DRIVER_H
