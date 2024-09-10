@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file driver.cpp
+ *\brief UART IMU Driver implementation.
+ */
 #include <communication_protocols/uart_imu.h>
 #include <messages/imu_data.h>
 #include <serializer/serializer.h>
@@ -41,6 +44,7 @@ bool IsStartingWithStartByte(const std::vector<std::byte> bytes_stream_from_imu)
   return bytes_stream_from_imu.front() == uart_imu::START_BYTE;
 }
 
+/*! \brief Clean the front of the byte stream up to the first START_BYTE.*/
 void CleanStreamUpToStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
   auto start_byte_iterator =
       std::find(bytes_stream_from_imu.begin(), bytes_stream_from_imu.end(), uart_imu::START_BYTE);
@@ -62,6 +66,7 @@ void Driver::Start() {
   }
   driver_thread_ = std::thread(&Driver::Run, this);
 }
+
 void Driver::Stop() {
   driver_must_stop_ = true;
   if (driver_thread_.joinable()) {
