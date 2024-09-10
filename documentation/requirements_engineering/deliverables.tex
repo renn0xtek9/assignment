@@ -21,6 +21,7 @@ The IMU message data will be displayed on the \texttt{flight\_software} terminal
 
 \subsection{Code description}
 The core of the driver logic is in the \href{https://github.com/renn0xtek9/assignment/blob/master/flight_software/libs/embedded_software/uart_imu_driver/src/driver.cpp}{\texttt{driver.cpp}} file.
+For reference it is appened at the end of this document (See section \ref{sec:driver_code}).
 It essentially implements a simple high-level driver that reads bytes from a device file using a polling mechanism.
 This approach has been chosen for simplicity.
 It has shortcommings in term of real time performance especially with respect of accuracy of the time stamping of the messages.
