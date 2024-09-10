@@ -69,6 +69,7 @@ void Driver::Stop() {
   if (driver_thread_.joinable()) {
     driver_thread_.join();
   }
+  UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::NO_DATA);
 }
 
 void Driver::FlushTheDeviceFile() const {
@@ -85,7 +86,15 @@ std::vector<std::byte> Driver::ReadBytesFromDevice() const {
   return byte_read_from_imu;
 }
 
+void Driver::UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus new_status) {
+  // if (new_status != internal_driver_status_) {
+  driver_context_.SetStatus(new_status);
+  internal_driver_status_ = new_status;
+  // }
+}
+
 void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu) {
+  const auto expected_start_of_new_messages = os_layer_.TimeStampNow();
   while (!driver_must_stop_) {
     bytes_stream_from_imu = ReadBytesFromDevice();
     CleanStreamUpToStartByte(bytes_stream_from_imu);
@@ -93,11 +102,23 @@ void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_im
       break;
     }
     std::this_thread::sleep_for(uart_imu::FRAME_DURATION_US);
+    const auto new_timestamp = os_layer_.TimeStampNow();
+    const auto duration_since_expected = new_timestamp - expected_start_of_new_messages;
+    const auto timeout =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
+    if (duration_since_expected.count() > timeout.count()) {
+      UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::NO_DATA);
+    } else {
+      // printf("DEBUG duration\n");
+      // fflush(stdout);
+      // std::cout<< "Old TS: "<<expected_start_of_new_messages.count() << " New TS: "<<new_timestamp.count() <<
+      // std::endl; std::cout << "Duration: "<< duration_since_expected.count() <<" Timeout: "<<timeout.count() <<
+      // std::endl;
+    }
   }
 }
 
 void Driver::Run() {
-  driver_context_.SetStatus(messages::ImuDriverStatus::OK);
   FlushTheDeviceFile();
 
   std::vector<std::byte> bytes_stream_from_imu{};
@@ -105,6 +126,7 @@ void Driver::Run() {
   while (!driver_must_stop_) {
     PollAtAHigherFrequency(bytes_stream_from_imu);
     const auto timestamp = os_layer_.TimeStampNow();
+    UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::OK);
 
     // First byte has been received, now sleep until all the bytes are transferred.
     std::this_thread::sleep_for(uart_imu::MESSAGE_DURATION_US);

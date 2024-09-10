@@ -45,11 +45,14 @@ TEST_F(UartImuDriverTest, UartImuDriverWontStartIfCannotOpenFile) {
 /*! \test UartImuDriver: can start and stop driver. */
 TEST_F(UartImuDriverTest, UartImuDriverStartStop) {
   uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
+  EXPECT_CALL(os_abstraction_layer_, OpenDeviceFile("some_device_file")).WillOnce(Return(FILE_DESCRIPTOR));
   EXPECT_EQ(messages::ImuDriverStatus::NO_DATA, imu_driver_context_.GetStatus()) << "Initial status should be NO_DATA";
-
+  EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(0));
+  EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(FILE_DESCRIPTOR)).WillRepeatedly(Return(0));
+  EXPECT_CALL(os_abstraction_layer_, ReadFromFile(FILE_DESCRIPTOR, _, 1)).Times(AtLeast(0));
   driver.Start();
   std::this_thread::sleep_for(2 * uart_imu::SLEEP_TIME_BETWEEN_MESSAGES_US);
-  EXPECT_EQ(messages::ImuDriverStatus::OK, imu_driver_context_.GetStatus()) << "Status should be OK after start";
+  EXPECT_EQ(messages::ImuDriverStatus::NO_DATA, imu_driver_context_.GetStatus()) << "Status should be OK after start";
   driver.Stop();
 }
 
@@ -70,6 +73,7 @@ TEST_F(UartImuDriverTest, UartImuPollForByteavailableAtStart) {
   EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(FILE_DESCRIPTOR))
       .WillOnce(Return(0))
       .WillRepeatedly(Return(1));
+  EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(0));
   EXPECT_CALL(os_abstraction_layer_, ReadFromFile(FILE_DESCRIPTOR, _, 1)).Times(AtLeast(1));
 
   uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
@@ -157,11 +161,44 @@ TEST_F(UartImuDriverTestReadingFile, UartImuReadBytesFromFile) {
   uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
   driver.Start();
   std::this_thread::sleep_for(2 * uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
+  EXPECT_TRUE(imu_driver_context_.GetStatus() == messages::ImuDriverStatus::OK) << "Status should be OK";
+
   driver.Stop();
   std::lock_guard<std::mutex> lock(imu_driver_context_.queue_mutex);
 
   EXPECT_TRUE(!imu_driver_context_.imu_data_queue.empty()) << "IMU data should be in the queue";
   ExpectMesssagesAreEqual(expected_imu_data, imu_driver_context_.imu_data_queue.front());
+}
+
+/*! \test UartImuDriver: shall not create messages from invalid byte stream.
+ * Sys-Req: TS7
+ */
+TEST_F(UartImuDriverTestReadingFile, UartImuSetStatusToNoDataWhenNoMoreData) {
+  const auto expected_timestamp{std::chrono::nanoseconds{123456789}};
+  const auto far_future_timestamp{2 * expected_timestamp};
+  messages::ImuData expected_imu_data = CreateExpectedImuData(expected_timestamp);
+
+  EXPECT_CALL(os_abstraction_layer_, OpenDeviceFile("some_device_file")).WillOnce(Return(FILE_DESCRIPTOR));
+  EXPECT_CALL(os_abstraction_layer_, ByteAvailableToRead(FILE_DESCRIPTOR))
+      .WillOnce(Return(0))
+      .WillOnce(Return(0))
+      .WillOnce(Return(static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)))
+      .WillRepeatedly(Return(0));
+  EXPECT_CALL(os_abstraction_layer_, TimeStampNow()).Times(AtLeast(1));
+  EXPECT_CALL(os_abstraction_layer_,
+              ReadFromFile(FILE_DESCRIPTOR, _, static_cast<int>(uart_imu::TOTAL_NUMBER_OF_BYTES)))
+      .Times(AtLeast(1));
+
+  os_abstraction_layer_.SetBytesToReturn(AssembleFrame(serializer::uart::Serialize(expected_imu_data)));
+  os_abstraction_layer_.SetTimeIncrement(std::chrono::duration_cast<std::chrono::nanoseconds>(uart_imu::TIMEOUT));
+
+  uart_imu::Driver driver(os_abstraction_layer_, imu_driver_context_, {"some_device_file"});
+  driver.Start();
+  std::this_thread::sleep_for(50ms);
+  EXPECT_TRUE(imu_driver_context_.GetStatus() == messages::ImuDriverStatus::NO_DATA) << "Status should be NO_DATA";
+  driver.Stop();
+  EXPECT_TRUE(imu_driver_context_.GetStatus() == messages::ImuDriverStatus::NO_DATA)
+      << "Status should set back to NO_DATA";
 }
 
 /*! \test UartImuDriver: shall not create empty messages.*/
