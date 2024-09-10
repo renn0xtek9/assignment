@@ -63,7 +63,7 @@ class Driver {
   /*! \brief Poll the device file at regular small interface to catch the start of a message\
    * \param bytes_stream_from_imu vector of bytes from the IMU.
    */
-  void PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu);
+  void PollAtAHigherFrequencyUntilStartByte(std::vector<std::byte>& bytes_stream_from_imu);
 
   /*! \brief Run function
   Started in separated thread form start.*/

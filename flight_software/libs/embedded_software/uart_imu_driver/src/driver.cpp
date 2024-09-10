@@ -91,7 +91,7 @@ void Driver::UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus new
   // }
 }
 
-void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu) {
+void Driver::PollAtAHigherFrequencyUntilStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
   const auto expected_start_of_new_messages = os_layer_.TimeStampNow();
   while (!driver_must_stop_) {
     bytes_stream_from_imu = ReadBytesFromDevice();
@@ -116,7 +116,7 @@ void Driver::Run() {
   std::vector<std::byte> bytes_stream_from_imu{};
 
   while (!driver_must_stop_) {
-    PollAtAHigherFrequency(bytes_stream_from_imu);
+    PollAtAHigherFrequencyUntilStartByte(bytes_stream_from_imu);
     const auto timestamp = os_layer_.TimeStampNow();
     UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::OK);
 
