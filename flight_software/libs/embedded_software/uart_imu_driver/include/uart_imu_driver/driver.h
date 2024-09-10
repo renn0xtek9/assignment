@@ -1,10 +1,13 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file driver.h
+ *\brief UART IMU Driver header.
+ */
 #ifndef UART_IMU_DRIVER_DRIVER_H
 #define UART_IMU_DRIVER_DRIVER_H
 #include <communication_protocols/uart_imu.h>
 #include <messages/imu_data.h>
 #include <messages/imu_driver_status.h>
-#include <os_abstraction_layer/linux_os_abstraction_layer.h>
+#include <os_abstraction_layer/os_abstraction_layer_interface.h>
 #include <uart_imu_driver/driver_context.h>
 
 #include <array>
@@ -51,6 +54,7 @@ class Driver {
  private:
   /*! \brief Empty the device file by reading all its content and dismissing data.*/
   void FlushTheDeviceFile() const;
+
   /*! \brief Read bytes from the device file
    * This will read  all bytes available in the device file at once.
    * \return a vector of bytes read from the device file
@@ -60,7 +64,7 @@ class Driver {
   /*! \brief Poll the device file at regular small interface to catch the start of a message\
    * \param bytes_stream_from_imu vector of bytes from the IMU.
    */
-  void PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu);
+  void PollAtAHigherFrequencyUntilStartByte(std::vector<std::byte>& bytes_stream_from_imu);
 
   /*! \brief Run function
   Started in separated thread form start.*/

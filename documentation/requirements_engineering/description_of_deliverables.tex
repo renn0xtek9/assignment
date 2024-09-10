@@ -7,20 +7,25 @@ The deliverable are:
 \end{itemize}
 
 The source code to generate those artifacts is hosted on \href{https://github.com/renn0xtek9/assignment}{github}.
-The debian package shall be installable on a Linux Ubuntu 22.04 system.
+The debian package shall be installable on a Linux Ubuntu 22.04 system (user may have to \texttt{chmod +r} the debian packages.).
 It contains two executables:
 \begin{itemize}
     \item \texttt{flight\_software}: an application that integrates the IMU Driver and displays driver information and the latest driver message received.
     \item \texttt{software\_in\_the\_loop}: an application that simulates a fake IMU device and writes data to a virtual serial device file.
 \end{itemize}
 To setup the virtual device file the user must first run \texttt{setup\_software\_in\_the\_loop.sh} also provided within the package.\\
-This shall setup the virtual serial device file \texttt{/tmp/vserial\_flight\_software\_side} and \texttt{/tmp/vserial\_sil\_side}. \newline
-The user can then run \newline \texttt{flight\_software} \newline in a terminal and then \newline \texttt{software\_in\_the\_loop --duration\_ms=5000} \newline in another terminal. \\
+This shall setup two virtual serial device files
+\begin{itemize}
+    \item \texttt{/tmp/vserial\_flight\_software\_side}
+    \item \texttt{/tmp/vserial\_sil\_side}
+\end{itemize}
+The user can then run \newline \texttt{flight\_software} \newline in a terminal and then \newline \texttt{software\_in\_the\_loop --duration\_ms 5000} \newline in another terminal. \\
 This sends some fake (constant) values to the virtual serial device file for 5 seconds.
-The IMU message data will be displayed on the \texttt{flight\_software} terminal. Values should be nearly equal with respect to the LSB sensitivity.
+The IMU message data and driver status will be displayed on the \texttt{flight\_software} terminal. Values should be nearly equal with respect to the LSB sensitivity.
 
 \subsection{Code description}
 The core of the driver logic is in the \href{https://github.com/renn0xtek9/assignment/blob/master/flight_software/libs/embedded_software/uart_imu_driver/src/driver.cpp}{\texttt{driver.cpp}} file.
+For reference it is appened at the end of this document (See section \ref{sec:driver_code}).
 It essentially implements a simple high-level driver that reads bytes from a device file using a polling mechanism.
 This approach has been chosen for simplicity.
 It has shortcommings in term of real time performance especially with respect of accuracy of the time stamping of the messages.
@@ -44,6 +49,6 @@ The driver has a \texttt{Start()} method that will spin a \texttt{Run()} in its 
 Calling the \text{Stop()} method shall stop it.\\
 The conversion of message is done in the \href{https://github.com/renn0xtek9/assignment/blob/master/flight_software/libs/embedded_software/serializer/src/serializer.cpp}{serializer.cpp}.
 
-The rest of this documents is a very brief and non finalized analysis of the requirements and the design of the driver.
+The rest of this documents is a very brief and non finalized requirements and design analysis of the driver.
 In a real context this work should order of magnitude more detailed.\\
 I will be happy to discuss this work with you in a meeting.

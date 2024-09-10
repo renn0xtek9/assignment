@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file driver_context.h
+ *\brief DriverContext header.
+ */
 #ifndef UART_IMU_DRIVER_DRIVER_CONTEXT_H
 #define UART_IMU_DRIVER_DRIVER_CONTEXT_H
 #include <messages/imu_data.h>

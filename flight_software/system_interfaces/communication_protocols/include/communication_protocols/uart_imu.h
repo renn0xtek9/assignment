@@ -42,7 +42,9 @@ constexpr std::chrono::microseconds SLEEP_TIME_BETWEEN_MESSAGES_US{
     DURATION_BETWEEN_END_AND_START_OF_MESSAGE -
     FRAME_DURATION_US}; /**< Sleep time of the driver between two messages in microseconds.*/
 
-constexpr std::chrono::microseconds TIMEOUT = DURATION_BETWEEN_TWO_START_BYTES + DURATION_BETWEEN_TWO_START_BYTES;
+constexpr std::chrono::microseconds TIMEOUT =
+    DURATION_BETWEEN_TWO_START_BYTES +
+    DURATION_BETWEEN_TWO_START_BYTES; /**< Duration after which we consider to have lost the contact with the IMU */
 
 constexpr std::byte START_BYTE{0xAA}; /**< Value of the start byte.*/
 

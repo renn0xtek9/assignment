@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file imu_information.h
+ *\brief ostream overloads for UART IMU information.
+ */
 #ifndef DISPLAY_IMU_H
 #define DISPLAY_IMU_H
 #include <messages/imu_data.h>

@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file serializer.h
+ *\brief Serializer header.
+ */
 #ifndef SERIALIZER_SERIALIZER_H
 #define SERIALIZER_SERIALIZER_H
 #include <communication_protocols/uart_imu.h>
@@ -31,7 +34,7 @@ std::array<std::byte, uart_imu::NUMBER_OF_BYTES_FOR_FLOAT_ENCODING> EncodeFloatO
                                                                                           const float& lsb_sensitivity);
 
 /*! \brief Decode an array of two bytes into a float value
- *  \param encoded_acceleration The array of two bytes to decode. The low byte is in the first position.
+ *  \param encoded_byte_array The array of two bytes to decode. The low byte is in the first position.
  *  \param lsb_sensitivity The least significant bit sensitivity of the sensor for this particular data
  *  \return The decoded float value
  */

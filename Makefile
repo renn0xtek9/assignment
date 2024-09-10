@@ -19,7 +19,7 @@ clean:
 	rm -rf output/
 
 documentation: configure_debug
-	cd $(BUILD_DIR_DEBUG) && make requirements_document
+	cd $(BUILD_DIR_DEBUG) && make deliverables_documentation
 	cd $(BUILD_DIR_DEBUG) && make code_documentation
 	cd $(BUILD_DIR_DEBUG) && make software_build_process_documentation
 	cd $(BUILD_DIR_DEBUG) && make package

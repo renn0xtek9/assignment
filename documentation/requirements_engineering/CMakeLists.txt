@@ -1,6 +1,6 @@
 INCLUDE (CreateLatexDocument)
 
-SET (REQ_DOC_NAME "requirements_document")
+SET (REQ_DOC_NAME "deliverables_documentation")
 SET (REQ_DOC_TEXFILE ${REQ_DOC_NAME}.tex)
 
 FILE (GLOB_RECURSE REQ_DIAGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/diagrams/*.plantuml)

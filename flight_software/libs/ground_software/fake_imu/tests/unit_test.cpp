@@ -1,5 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
-
+/*! \file unit_test.cpp
+ *\brief unit tests of the FakeImu Library.
+ */
 #include <communication_protocols/uart_imu.h>
 #include <fake_imu/fake_imu.h>
 #include <gmock/gmock.h>

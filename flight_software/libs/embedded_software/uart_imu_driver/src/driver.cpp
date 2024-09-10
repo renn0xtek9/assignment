@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file driver.cpp
+ *\brief UART IMU Driver implementation.
+ */
 #include <communication_protocols/uart_imu.h>
 #include <messages/imu_data.h>
 #include <serializer/serializer.h>
@@ -41,6 +44,7 @@ bool IsStartingWithStartByte(const std::vector<std::byte> bytes_stream_from_imu)
   return bytes_stream_from_imu.front() == uart_imu::START_BYTE;
 }
 
+/*! \brief Clean the front of the byte stream up to the first START_BYTE.*/
 void CleanStreamUpToStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
   auto start_byte_iterator =
       std::find(bytes_stream_from_imu.begin(), bytes_stream_from_imu.end(), uart_imu::START_BYTE);
@@ -54,7 +58,6 @@ Driver::Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrc
 }
 
 void Driver::Start() {
-  printf("Starting IMU driver.\n");
   file_descriptor_ = os_layer_.OpenDeviceFile(device_file_path_);
   if (file_descriptor_ < 0) {
     std::cout << "Driver could not open device file: " << device_file_path_ << std::endl;
@@ -63,8 +66,8 @@ void Driver::Start() {
   }
   driver_thread_ = std::thread(&Driver::Run, this);
 }
+
 void Driver::Stop() {
-  printf("Stopping IMU driver.\n");
   driver_must_stop_ = true;
   if (driver_thread_.joinable()) {
     driver_thread_.join();
@@ -87,13 +90,13 @@ std::vector<std::byte> Driver::ReadBytesFromDevice() const {
 }
 
 void Driver::UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus new_status) {
-  // if (new_status != internal_driver_status_) {
-  driver_context_.SetStatus(new_status);
-  internal_driver_status_ = new_status;
-  // }
+  if (new_status != internal_driver_status_) {
+    driver_context_.SetStatus(new_status);
+    internal_driver_status_ = new_status;
+  }
 }
 
-void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu) {
+void Driver::PollAtAHigherFrequencyUntilStartByte(std::vector<std::byte>& bytes_stream_from_imu) {
   const auto expected_start_of_new_messages = os_layer_.TimeStampNow();
   while (!driver_must_stop_) {
     bytes_stream_from_imu = ReadBytesFromDevice();
@@ -108,12 +111,6 @@ void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_im
         std::chrono::duration_cast<std::chrono::nanoseconds>(uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
     if (duration_since_expected.count() > timeout.count()) {
       UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::NO_DATA);
-    } else {
-      // printf("DEBUG duration\n");
-      // fflush(stdout);
-      // std::cout<< "Old TS: "<<expected_start_of_new_messages.count() << " New TS: "<<new_timestamp.count() <<
-      // std::endl; std::cout << "Duration: "<< duration_since_expected.count() <<" Timeout: "<<timeout.count() <<
-      // std::endl;
     }
   }
 }
@@ -124,7 +121,7 @@ void Driver::Run() {
   std::vector<std::byte> bytes_stream_from_imu{};
 
   while (!driver_must_stop_) {
-    PollAtAHigherFrequency(bytes_stream_from_imu);
+    PollAtAHigherFrequencyUntilStartByte(bytes_stream_from_imu);
     const auto timestamp = os_layer_.TimeStampNow();
     UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::OK);
 

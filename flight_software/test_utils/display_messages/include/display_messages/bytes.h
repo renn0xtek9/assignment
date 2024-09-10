@@ -1,4 +1,7 @@
 // Copyright 2024 <Maxime Haselbauer>
+/*! \file bytes.h
+ *\brief ostream overloads for std::bytes
+ */
 #ifndef DISPLAY_MESSAGES_BYTES_H
 #define DISPLAY_MESSAGES_BYTES_H
 

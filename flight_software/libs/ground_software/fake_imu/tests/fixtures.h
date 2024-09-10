@@ -3,8 +3,7 @@
 #define FIXTURES_H
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include "mocks.h"
+#include <os_abstraction_layer/mocks.h>
 
 /*! \brief Test fixture for tests of FakeImu library*/
 class FakeImuTest : public ::testing::Test {
