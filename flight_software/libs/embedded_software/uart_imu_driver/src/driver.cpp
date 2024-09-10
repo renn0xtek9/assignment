@@ -54,7 +54,6 @@ Driver::Driver(const OsAbstractionLayer::OsAbstractionLayerInterface& os_abastrc
 }
 
 void Driver::Start() {
-  printf("Starting IMU driver.\n");
   file_descriptor_ = os_layer_.OpenDeviceFile(device_file_path_);
   if (file_descriptor_ < 0) {
     std::cout << "Driver could not open device file: " << device_file_path_ << std::endl;
@@ -64,7 +63,6 @@ void Driver::Start() {
   driver_thread_ = std::thread(&Driver::Run, this);
 }
 void Driver::Stop() {
-  printf("Stopping IMU driver.\n");
   driver_must_stop_ = true;
   if (driver_thread_.joinable()) {
     driver_thread_.join();
@@ -108,12 +106,6 @@ void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_im
         std::chrono::duration_cast<std::chrono::nanoseconds>(uart_imu::DURATION_BETWEEN_TWO_START_BYTES);
     if (duration_since_expected.count() > timeout.count()) {
       UpdateContextWithDriveStatusIfChanges(messages::ImuDriverStatus::NO_DATA);
-    } else {
-      // printf("DEBUG duration\n");
-      // fflush(stdout);
-      // std::cout<< "Old TS: "<<expected_start_of_new_messages.count() << " New TS: "<<new_timestamp.count() <<
-      // std::endl; std::cout << "Duration: "<< duration_since_expected.count() <<" Timeout: "<<timeout.count() <<
-      // std::endl;
     }
   }
 }
