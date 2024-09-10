@@ -92,11 +92,11 @@ void Driver::Run() {
   std::vector<std::byte> bytes_stream_from_imu{};
 
   while (!driver_must_stop_) {
-    while (!IsStartingWithStartByte(bytes_stream_from_imu)) {
+    while (!driver_must_stop_) {
       bytes_stream_from_imu = ReadBytesFromDevice();
       CleanStreamUpToStartByte(bytes_stream_from_imu);
-      if (driver_must_stop_) {
-        return;
+      if (IsStartingWithStartByte(bytes_stream_from_imu)) {
+        break;
       }
       std::this_thread::sleep_for(uart_imu::FRAME_DURATION_US);
     }
