@@ -3,9 +3,9 @@
 #define FIXTURES_H
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <os_abstraction_layer/mocks.h>
 #include <uart_imu_driver/driver_context.h>
-
-#include "mocks.h"
+// #include "mocks.h"
 
 /*! \brief Fixture for basic tests of the UartImuDriver*/
 class UartImuDriverTest : public ::testing::Test {
