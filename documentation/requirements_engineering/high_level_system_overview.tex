@@ -139,6 +139,11 @@ The complete message (150 bits) transmission duration is 3906 $\mu$s.
 With 208 Hz, the duration between the start of two messages is 4897 $\mu$s.
 This leads to an approximative 900 $\mu$s of idle time between two messages.
 
+\textbf{Note:} we will use those values in the code implemenation.
+However, due to the non real time nature of a stock x86 Linux Ubuntu OS, the actual sleep duration will be inaccurate.
+On our machine the minimum sleep duration is approx. 55 $\mu$s.
+As mentionned earlier, this is a limit of a high-level polling approach.
+
 
 \subsection{Software interface definition}
 We define the following structure for IMU messages.\\
