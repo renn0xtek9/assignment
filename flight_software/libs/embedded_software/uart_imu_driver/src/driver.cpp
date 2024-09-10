@@ -85,6 +85,17 @@ std::vector<std::byte> Driver::ReadBytesFromDevice() const {
   return byte_read_from_imu;
 }
 
+void Driver::PollAtAHigherFrequency(std::vector<std::byte>& bytes_stream_from_imu) {
+  while (!driver_must_stop_) {
+    bytes_stream_from_imu = ReadBytesFromDevice();
+    CleanStreamUpToStartByte(bytes_stream_from_imu);
+    if (IsStartingWithStartByte(bytes_stream_from_imu)) {
+      break;
+    }
+    std::this_thread::sleep_for(uart_imu::FRAME_DURATION_US);
+  }
+}
+
 void Driver::Run() {
   driver_context_.SetStatus(messages::ImuDriverStatus::OK);
   FlushTheDeviceFile();
@@ -92,17 +103,10 @@ void Driver::Run() {
   std::vector<std::byte> bytes_stream_from_imu{};
 
   while (!driver_must_stop_) {
-    while (!driver_must_stop_) {
-      bytes_stream_from_imu = ReadBytesFromDevice();
-      CleanStreamUpToStartByte(bytes_stream_from_imu);
-      if (IsStartingWithStartByte(bytes_stream_from_imu)) {
-        break;
-      }
-      std::this_thread::sleep_for(uart_imu::FRAME_DURATION_US);
-    }
+    PollAtAHigherFrequency(bytes_stream_from_imu);
     const auto timestamp = os_layer_.TimeStampNow();
 
-    // First bit has been received, now sleep until all the bytes are transferred.
+    // First byte has been received, now sleep until all the bytes are transferred.
     std::this_thread::sleep_for(uart_imu::MESSAGE_DURATION_US);
 
     auto byte_read_from_imu = ReadBytesFromDevice();
