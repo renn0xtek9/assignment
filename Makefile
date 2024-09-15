@@ -6,7 +6,7 @@ format:
 
 build-x86-%/Makefile: $(shell find -name CMakeLists.txt)
 	@echo Configure $*
-	cmake -S . -B build-x86-$* -DCMAKE_BUILD_TYPE=$* -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=/usr/ --graphviz=build-x86-$*/cmake.dot
+	cmake -S . -B build-x86-$* -C cmake_presets/x86-$*.cmake --graphviz=build-x86-$*/build-documentation/cmake.dot
 
 configure_debug: $(BUILD_DIR_DEBUG)/Makefile
 
@@ -22,7 +22,7 @@ documentation: configure_debug
 	cd $(BUILD_DIR_DEBUG) && make deliverables_documentation
 	cd $(BUILD_DIR_DEBUG) && make code_documentation
 	cd $(BUILD_DIR_DEBUG) && make software_build_process_documentation
-	cd $(BUILD_DIR_DEBUG) && make package
+	# cd $(BUILD_DIR_DEBUG) && make package
 
 build_debug: configure_debug
 	cmake --build $(BUILD_DIR_DEBUG) --parallel $(shell $(nproc))
