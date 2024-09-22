@@ -14,6 +14,13 @@ configure_release: $(BUILD_DIR_RELEASE)/Makefile
 
 configure: configure_debug configure_release
 
+
+cfe:
+	cd embedded_software/middleware/cFS/ && cp cfe/cmake/Makefile.sample Makefile
+	cd embedded_software/middleware/cFS/ && cp -r cfe/cmake/sample_defs sample_defs
+	cd embedded_software/middleware/cFS/ && make BUILDTYPE=release OMIT_DEPRECATED=true prep
+	cd embedded_software/middleware/cFS/ && make all
+
 clean:
 	rm -rf build*
 	rm -rf output/
