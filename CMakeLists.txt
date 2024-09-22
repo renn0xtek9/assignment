@@ -1,4 +1,6 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 3.0)
+FILE (COPY cmake_modules/CMakeGraphVizOptions.cmake
+      DESTINATION ${CMAKE_BINARY_DIR})
 PROJECT (flight-software VERSION 0.0.1)
 ENABLE_TESTING ()
 FIND_PROGRAM (CONAN conan)

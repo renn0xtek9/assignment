@@ -28,7 +28,7 @@ MACRO (CREATE_LATEX_DOCUMENT docname_ texsrc_ resources_ bibfile_)
   CONVERT_PLANTUML_TO_PNG ("${resources_}")
 
   ADD_CUSTOM_TARGET (
-    ${docname_}
+    ${docname_} ALL
     COMMENT "Building ${docname_}.pdf"
     DEPENDS ${OUTPUT_FOLDER}/${docname_}.pdf
     SOURCES ${texsrc_})

@@ -1,0 +1,91 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 22,
+        "patch": 1
+    },
+    "configurePresets": [
+        {
+            "name": "x86-Debug",
+            "displayName": "x86 Default Config",
+            "description": "Debug build with Unix Makefiles",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build-x86-Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Debug"
+                },
+                "CMAKE_INSTALL_PREFIX": {
+                    "type": "PATH",
+                    "value": "/usr"
+                },
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "BUILD_TESTING": "ON"
+            },
+            "vendor": {
+                "my_vendor_name": {
+                    "autoFormat": true
+                }
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "x86-Debug",
+            "configurePreset": "x86-Debug"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "x86-Debug-unit-tests",
+            "configurePreset": "x86-Debug",
+            "output": {
+                "outputOnFailure": true,
+                "shortProgress": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": true
+            }
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "x86-Debug",
+            "configurePreset": "x86-Debug",
+            "generators": [
+                "DEB"
+            ]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "x86-Debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "x86-Debug"
+                },
+                {
+                    "type": "build",
+                    "name": "x86-Debug"
+                },
+                {
+                    "type": "test",
+                    "name": "x86-Debug"
+                },
+                {
+                    "type": "package",
+                    "name": "x86-Debug"
+                }
+            ]
+        }
+    ],
+    "vendor": {
+        "my_vendor_name": {
+            "autoFormat": false
+        }
+    }
+}

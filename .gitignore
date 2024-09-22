@@ -1,5 +1,6 @@
 *.orig
 .vscode/
+build
 build*/*
 output/*
 documentation/*.bbl

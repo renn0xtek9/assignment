@@ -2,14 +2,38 @@
 <html>
 
 <head>
-    <title>Software build process</title>
+    <title>Development process</title>
 </head>
 
 <body>
-    <h1>Packaging process</h1>
-    <img src="graph-packaging.png" alt="Graph Packaging">
-    <h1>Documentation process</h1>
-    <img src="graph-documentation.png" alt="Graph Documentation">
+
+    <h1>Makefile Targets</h1>
+    <div id="targets-container"></div>
+
+    <script>
+        // Define the list of targets from CMake
+        const targets = @DOCUMENTED_MAKEFILE_TARGET_JSON@;
+
+        // Function to create and insert target elements into the DOM
+        function createTargetElements() {
+            const container = document.getElementById('targets-container');
+            targets.forEach(target => {
+                // Create a heading for each target
+                const h1 = document.createElement('h1');
+                h1.textContent = target;
+                container.appendChild(h1);
+
+                // Create an image for each target
+                const img = document.createElement('img');
+                img.src = `graph-${target}.png`;
+                img.alt = `make graph ${target}`;
+                container.appendChild(img);
+            });
+        }
+
+        // Call the function to create elements on page load
+        window.onload = createTargetElements;
+    </script>
 
 </body>
 
