@@ -22,7 +22,7 @@
                     "value": "/usr"
                 },
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "BUILD_TESTING": "ON"
+                "BUILD_TESTING": "ON",
             },
             "vendor": {
                 "my_vendor_name": {
