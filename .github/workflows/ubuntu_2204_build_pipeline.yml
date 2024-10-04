@@ -22,7 +22,7 @@ jobs:
       - name: Packaging
         run: make packaging
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: ./output/flight-software-0.0.1-Release-Linux.deb
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Download package
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: package
         path: /tmp/
