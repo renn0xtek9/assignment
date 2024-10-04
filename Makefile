@@ -1,10 +1,10 @@
-BUILD_DIR_DEBUG=build-x86-Debug
-BUILD_DIR_RELEASE=build-x86-Release
+BUILD_DIR_DEBUG=$(shell pwd)/build-x86-Debug
+BUILD_DIR_RELEASE=$(shell pwd)/build-x86-Release
 
 format:
 	pre-commit run --all-files
 
-build-x86-%/Makefile: $(shell find -name CMakeLists.txt)
+$(shell pwd)/build-x86-%/Makefile: $(shell find -name CMakeLists.txt)
 	@echo Configure $*
 	cmake -S . -B build-x86-$* -C cmake_presets/x86-$*.cmake --graphviz=build-x86-$*/build-documentation/cmake.dot
 
@@ -15,11 +15,9 @@ configure_release: $(BUILD_DIR_RELEASE)/Makefile
 configure: configure_debug configure_release
 
 
-cfe:
-	cd embedded_software/middleware/cFS/ && cp cfe/cmake/Makefile.sample Makefile
-	cd embedded_software/middleware/cFS/ && cp -r cfe/cmake/sample_defs sample_defs
-	cd embedded_software/middleware/cFS/ && make BUILDTYPE=release OMIT_DEPRECATED=true prep
-	cd embedded_software/middleware/cFS/ && make all
+cfe_debug:
+	cd embedded_software/middleware/NASA-cFS/ && make BUILDTYPE=release OMIT_DEPRECATED=true prep O=$(BUILD_DIR_DEBUG)/cfe_integration/
+	cd $(BUILD_DIR_DEBUG)/cfe_integration/ && make all
 
 clean:
 	rm -rf build*
