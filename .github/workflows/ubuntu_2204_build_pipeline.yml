@@ -9,6 +9,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install development dependencies
         run: ./.devcontainer/setup_build_environment_on_ubuntu_22.sh
+      - name: Install development dependencies
+        run: ./.devcontainer/setup_documentation_environment_on_ubuntu_22.sh
       - name: Check formating
         run: make format
       - name: Configure
@@ -19,10 +21,12 @@ jobs:
         run: make test
       - name: Validation
         run: make validate
+      - name: Documentation
+        run: make documentation
       - name: Packaging
         run: make packaging
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: ./output/flight-software-0.0.1-Release-Linux.deb
@@ -32,7 +36,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Download package
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: package
         path: /tmp/
