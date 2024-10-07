@@ -25,15 +25,13 @@ MACRO (CREATE_LATEX_DOCUMENT docname_ texsrc_ resources_ bibfile_)
   SET (OUTPUT_FOLDER "${CMAKE_CURRENT_BINARY_DIR}/${docname_}/")
   FILE (MAKE_DIRECTORY ${OUTPUT_FOLDER})
 
-  # BUG - The documented must be added the created png as dependencies.
-  # Otherwise they won't be built until we make all
-  CONVERT_PLANTUML_TO_PNG ("${resources_}")
-
   ADD_CUSTOM_TARGET (
     ${docname_} ALL
     COMMENT "Building ${docname_}.pdf"
     DEPENDS ${OUTPUT_FOLDER}/${docname_}.pdf
     SOURCES ${texsrc_})
+
+  CONVERT_PLANTUML_TO_PNG (PLANTUML_FILES "${resources_}" DOCUMENT ${docname_})
 
   ADD_CUSTOM_COMMAND (
     OUTPUT ${OUTPUT_FOLDER}/${docname_}.pdf
