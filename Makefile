@@ -24,10 +24,8 @@ clean:
 	rm -rf output/
 
 documentation: configure_debug
-	cd $(BUILD_DIR_DEBUG) && make deliverables_documentation
-	cd $(BUILD_DIR_DEBUG) && make code_documentation
-	cd $(BUILD_DIR_DEBUG) && make software_build_process_documentation
-	cd $(BUILD_DIR_DEBUG) && make package
+	cd $(BUILD_DIR_DEBUG) && make documentation
+	# cd $(BUILD_DIR_DEBUG) && make package_documentation
 
 build_debug: configure_debug
 	cmake --build $(BUILD_DIR_DEBUG) --parallel $(shell $(nproc))
@@ -49,8 +47,11 @@ performance: build_release
 
 validate: quality test performance
 
-packaging: validate
-	cd $(BUILD_DIR_RELEASE) && make package
+sdk: configure_debug
+	cd $(BUILD_DIR_DEBUG) && make package_sdk
+
+packaging: configure_debug sdk documentation
+	cd $(BUILD_DIR_DEBUG) && make package
 
 all: packaging documentation
 

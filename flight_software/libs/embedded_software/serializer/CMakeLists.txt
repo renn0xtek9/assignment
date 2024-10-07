@@ -2,4 +2,6 @@ SET (LIBNAME serializer)
 CREATE_LIBRARY (SRCS src/serializer.cpp PUBLIC_HEADERS
                 include/${LIBNAME}/serializer.h LINK_LIBRARIES messages)
 
+INSTALL (TARGETS ${LIBNAME} COMPONENT flight_software)
+
 ADD_SUBDIRECTORY (tests)

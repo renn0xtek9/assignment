@@ -8,4 +8,5 @@ TARGET_LINK_LIBRARIES (
   ${FLIGHT_SOFTWARE_APP_NAME} PUBLIC uart_imu_driver linux_os_abstraction_layer
                                      deployment_configuration display_messages)
 
-INSTALL (TARGETS ${FLIGHT_SOFTWARE_APP_NAME} RUNTIME DESTINATION bin)
+INSTALL (TARGETS ${FLIGHT_SOFTWARE_APP_NAME} RUNTIME DESTINATION bin
+                                                     COMPONENT flight_software)

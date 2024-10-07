@@ -10,4 +10,6 @@ CREATE_LIBRARY (
   serializer
   messages)
 
+INSTALL (TARGETS ${LIBNAME} COMPONENT flight_software)
+
 ADD_SUBDIRECTORY (tests)
