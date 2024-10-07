@@ -1,7 +1,3 @@
-[submodule "embedded_software/middleware/cFS"]
-	path = embedded_software/middleware/cFS
-	url = https://github.com/nasa/cFS.git
-
 [submodule "embedded_software/middleware/NASA-cFS/cfe"]
 	path = embedded_software/middleware/NASA-cFS/cfe
 	url = https://github.com/renn0xtek9/cFE

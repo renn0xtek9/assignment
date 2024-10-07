@@ -1,0 +1,123 @@
+@startuml
+left to right direction
+frame "Debian packages" as Debs{
+    frame "Internal Development packages" as Internals {
+        package "internal-devel.deb" {
+            folder "/usr/share/flight-software"  {
+                [requirements_engineering.pdf] as DevReqEngDoc #Orange
+                [build_pipeline_documentation.pdf] as DevBuildPipeDoc #Orange
+                [Doxygen (flight-software)] as DevCodeDoxy #Orange
+                [Processes description website] as DevProcessWeb #Orange
+                [Doxygen (cFS)] as DevCFSIntegrationDoxy #Orange
+            }
+            folder "/usr/include/flight-software" {
+                [Public headers] as DevPubHeaders #LightBlue
+            }
+            folder "/usr/lib/flight-software" {
+                [Dynamic libraries (flight-software)] as DevDynLib #LightBlue
+                [Dynamic Libraries (cFS)] as DevCFSDynLib #DarkCyan
+            }
+            folder "/usr/bin" {
+                [Binaries (flight-software)] as DevBin #LightCyan
+                [Tools (flight-software)]   as DevTools #LightCyan
+                [Binaries (cFS)]    as DevCFSBin #DarkCyan
+                [Tools (cFS)] as DevCFSTools #LightSkyBlue
+            }
+            folder "/etc/cFS" {
+                [Configuration files (cFS)] as DevcFSConfFile #DarkCyan
+            }
+        }
+
+        package "onboard-devel.deb" {
+            folder "/usr/lib/flight-software" as OnboardLibfolder{
+                [Dynamic Libraries (cFS)] as OnboardDevCFSDynLib2 #DarkCyan
+                [**STATIC** Dynamic libraries (flight-software)] as OnboardStaticLib #LightBlue
+                OnboardStaticLib <- OnboardDevCFSDynLib2
+            }
+            folder "/usr/bin" as OnboardBinFolder {
+                [Binaries (cFS)] as OnboardDevCFSBin2 #DarkCyan
+            }
+            folder "/etc/cFS" as OnboadEtcFolder {
+                [Configuration Files] as OnboardDevcFSConfFile2 #DarkCyan
+            }
+        }
+    }
+
+    frame "External SDK" as Sdk{
+        package "external-sdk.deb"{
+            folder "/usr/share/flight-software" as SdkSharedFolder {
+                [sdk-documentation.pdf] as SdkDoc #Coral
+            }
+            folder "/usr/include/flight-software" as SdkIncludeFolder {
+                [Public headers] as SdkPubHeaders #LightBlue
+            }
+            folder "/usr/lib/flight-software" as SdkLibrariesFolder{
+                [Dynamic libraries (flight-software)] as SdkDynLib #LightBlue
+            }
+        }
+    }
+}
+
+
+
+frame CMakeComponents as Components{
+    node "CMake Component: Documentation" {
+        [requirements_engineering.pdf] as BuildReqEngDoc #Orange
+        [build_pipeline_documentation.pdf] as BuildBuildPipeDoc #Orange
+        [Doxygen (flight-software)] as BuildCodeDoxy #Orange
+        [Processes description website] as BuildProcessWeb #Orange
+        [Doxygen (cFS)] as BuildCFSIntegrationDoxy #Orange
+    }
+
+    node "CMake Component: cFS" {
+        [Dynamic Libraries (cFS)] as BuildCFSDynLib #DarkCyan
+        [Binaries (cFS)]    as BuildCFSBin #DarkCyan
+        [Configuration files (cFS)] as BuildcFSConfFile #DarkCyan
+    }
+    node "CMake Component: cFS-Tools" {
+        [Tools (cFS)] as BuildCFSTools #LightSkyBlue
+    }
+    node "CMake Component: SDK code" {
+        [Dynamic libraries (flight-software)] as BuildDynLib #LightBlue
+        [Public headers] as BuildPubHeaders #LightBlue
+    }
+    node "CMake Component: SDK doc" {
+        [sdk-documentation.pdf] as BuildSdkDoc #Coral
+
+
+    }
+}
+BuildReqEngDoc -> DevReqEngDoc
+BuildBuildPipeDoc -> DevBuildPipeDoc
+BuildCodeDoxy -> DevCodeDoxy
+BuildProcessWeb -> DevProcessWeb
+BuildCFSIntegrationDoxy -> DevCFSIntegrationDoxy
+
+BuildCFSDynLib -> DevCFSDynLib
+BuildCFSBin -> DevCFSBin
+BuildCFSTools -> DevCFSTools
+BuildcFSConfFile -> DevcFSConfFile
+
+BuildDynLib -> DevDynLib
+BuildDynLib -> SdkDynLib
+BuildPubHeaders -> SdkPubHeaders
+BuildPubHeaders -> DevPubHeaders
+BuildSdkDoc -> SdkDoc
+
+BuildCFSDynLib -> OnboardDevCFSDynLib2
+BuildCFSBin -> OnboardDevCFSBin2
+BuildcFSConfFile -> OnboardDevcFSConfFile2
+
+Debs -up-> Components #Gray
+Internals -up-> Components #Gray
+Sdk -up-> Components #Gray
+
+legend
+  |= **Color** |= **Component** |
+  |<#orange>| Developer documentation |
+  |<#Coral> | External SDK documentation |
+  |<#DarkCyan>| Flight Software |
+  |<#LightBlue>| SDK code |
+endlegend
+
+@enduml
