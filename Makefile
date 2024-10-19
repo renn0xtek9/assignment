@@ -50,7 +50,7 @@ validate: quality test performance
 sdk: configure_debug
 	cd $(BUILD_DIR_DEBUG) && make package_sdk
 
-packaging: configure_debug sdk documentation
+packaging: configure_debug
 	cd $(BUILD_DIR_DEBUG) && make package
 
 all: packaging documentation
