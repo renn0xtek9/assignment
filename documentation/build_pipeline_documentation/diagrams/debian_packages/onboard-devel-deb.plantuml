@@ -1,0 +1,16 @@
+@startuml
+package "onboard-devel.deb" {
+            folder "/usr/lib/flight-software" as OnboardLibfolder{
+                [Dynamic Libraries (cFS)] as OnboardDevCFSDynLib2 #DarkCyan
+                [**STATIC** Dynamic libraries (flight-software)] as OnboardStaticLib #LightBlue
+                OnboardStaticLib <- OnboardDevCFSDynLib2
+            }
+            folder "/usr/bin" as OnboardBinFolder {
+                [Binaries (cFS)] as OnboardDevCFSBin2 #DarkCyan
+            }
+            folder "/etc/cFS" as OnboadEtcFolder {
+                [Configuration Files] as OnboardDevcFSConfFile2 #DarkCyan
+            }
+        }
+
+@enduml

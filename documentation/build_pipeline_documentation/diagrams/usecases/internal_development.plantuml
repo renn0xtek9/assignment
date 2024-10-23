@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+actor Developer as Dev
+
+!include ../debian_packages/internal-devel-deb.plantuml
+!include ../debian_packages/external-sdk-deb.plantuml
+
+rectangle InternalDevelopment {
+  usecase "Run tools with given version on PC" as UC1
+  usecase "Read engineering documentation" as UC2
+  usecase "Read software documentation" as UC3
+}
+
+' UC1
+Dev --> UC1
+' UC2
+Dev --> UC2
+DevReqEngDoc -->UC2
+' UC3
+Dev -->UC3
+DevBuildPipeDoc -->UC3
+DevCodeDoxy -->UC3
+DevProcessWeb -->UC3
+
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+package "external-sdk.deb"{
+    folder "/usr/share/flight-software" as SdkSharedFolder {
+        [sdk-documentation.pdf] as SdkDoc #Coral
+    }
+    folder "/usr/include/flight-software" as SdkIncludeFolder {
+        [Public headers] as SdkPubHeaders #LightBlue
+    }
+    folder "/usr/lib/flight-software" as SdkLibrariesFolder{
+        [Dynamic libraries (flight-software)] as SdkDynLib #LightBlue
+    }
+}
+
+@enduml

@@ -2,63 +2,13 @@
 left to right direction
 frame "Debian packages" as Debs{
     frame "Internal Development packages" as Internals {
-        package "internal-devel.deb" {
-            folder "/usr/share/flight-software"  {
-                [requirements_engineering.pdf] as DevReqEngDoc #Orange
-                [build_pipeline_documentation.pdf] as DevBuildPipeDoc #Orange
-                [Doxygen (flight-software)] as DevCodeDoxy #Orange
-                [Processes description website] as DevProcessWeb #Orange
-                [Doxygen (cFS)] as DevCFSIntegrationDoxy #Orange
-            }
-            folder "/usr/include/flight-software" {
-                [Public headers] as DevPubHeaders #LightBlue
-            }
-            folder "/usr/lib/flight-software" {
-                [Dynamic libraries (flight-software)] as DevDynLib #LightBlue
-                [Dynamic Libraries (cFS)] as DevCFSDynLib #DarkCyan
-            }
-            folder "/usr/bin" {
-                [Binaries (flight-software)] as DevBin #LightCyan
-                [Tools (flight-software)]   as DevTools #LightCyan
-                [Binaries (cFS)]    as DevCFSBin #DarkCyan
-                [Tools (cFS)] as DevCFSTools #LightSkyBlue
-            }
-            folder "/etc/cFS" {
-                [Configuration files (cFS)] as DevcFSConfFile #DarkCyan
-            }
-        }
-
-        package "onboard-devel.deb" {
-            folder "/usr/lib/flight-software" as OnboardLibfolder{
-                [Dynamic Libraries (cFS)] as OnboardDevCFSDynLib2 #DarkCyan
-                [**STATIC** Dynamic libraries (flight-software)] as OnboardStaticLib #LightBlue
-                OnboardStaticLib <- OnboardDevCFSDynLib2
-            }
-            folder "/usr/bin" as OnboardBinFolder {
-                [Binaries (cFS)] as OnboardDevCFSBin2 #DarkCyan
-            }
-            folder "/etc/cFS" as OnboadEtcFolder {
-                [Configuration Files] as OnboardDevcFSConfFile2 #DarkCyan
-            }
-        }
+        !include debian_packages/internal-devel-deb.plantuml
+        !include debian_packages/onboard-devel-deb.plantuml
     }
-
     frame "External SDK" as Sdk{
-        package "external-sdk.deb"{
-            folder "/usr/share/flight-software" as SdkSharedFolder {
-                [sdk-documentation.pdf] as SdkDoc #Coral
-            }
-            folder "/usr/include/flight-software" as SdkIncludeFolder {
-                [Public headers] as SdkPubHeaders #LightBlue
-            }
-            folder "/usr/lib/flight-software" as SdkLibrariesFolder{
-                [Dynamic libraries (flight-software)] as SdkDynLib #LightBlue
-            }
-        }
+        !include debian_packages/external-sdk-deb.plantuml
     }
 }
-
-
 
 frame CMakeComponents as Components{
     node "CMake Component: Documentation" {
